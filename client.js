@@ -71,11 +71,61 @@ if(socket){
 	 	}		
 };
 
+function get(socket,data,fn){
+	console.log("client/get");
+	var result={code:1};
+if(socket){
+	 	socket.emit("client_get",result);
+	 }
+	 	else if(fn){
+	 		var returnString = JSON.stringify(result);
+	 		fn(returnString);
+	 	}		
+};
+
+function add(socket,data,fn){
+	console.log("client/add");
+	var result={code:1};
+if(socket){
+	 	socket.emit("client_add",result);
+	 }
+	 	else if(fn){
+	 		var returnString = JSON.stringify(result);
+	 		fn(returnString);
+	 	}		
+};
+
+function edit(socket,data,fn){
+	console.log("client/edit");
+	var result={code:1};
+if(socket){
+	 	socket.emit("client_edit",result);
+	 }
+	 	else if(fn){
+	 		var returnString = JSON.stringify(result);
+	 		fn(returnString);
+	 	}		
+};
+
+function remove(socket,data,fn){
+	console.log("client/edit");
+	var result={code:1};
+if(socket){
+	 	socket.emit("client_edit",result);
+	 }
+	 	else if(fn){
+	 		var returnString = JSON.stringify(result);
+	 		fn(returnString);
+	 	}		
+};
+
 exports.checkUser=checkUser;
 exports.checkPhone=checkPhone;
 exports.checkEmail=checkEmail;
 exports.login=login;
 exports.register=register;
 exports.resetKey=resetKey;
-
-
+exports.get=get;
+exports.add=add;
+exports.edit=edit;
+exports.remove=remove;
