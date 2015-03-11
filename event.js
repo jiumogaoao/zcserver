@@ -9,7 +9,6 @@ var server = {
  		announcement : require('./announcement'),
  		client : require('./client'),
  		company : require('./company'),
- 		member : require('./member'),
  		product : require('./product'),
  		promotion : require('./promotion'),
  		recruit : require('./recruit'),
