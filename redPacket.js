@@ -22,5 +22,18 @@ if(socket){
 	 	}		
 };
 
+function detail(socket,data,fn){
+	console.log("redPacket/detail");
+	var result={code:1};
+if(socket){
+	 	socket.emit("redPacket_detail",result);
+	 }
+	 	else if(fn){
+	 		var returnString = JSON.stringify(result);
+	 		fn(returnString);
+	 	}		
+};
+
 exports.get=get;
 exports.edit=edit;
+exports.detail=detail;
