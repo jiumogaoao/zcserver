@@ -21,17 +21,21 @@ var app = require('./server')
    var dbURL="mongodb://localhost/talk"
    global.db = require("mongoose").connect(dbURL)
    global.data_mg = {}
-      data_mg.member = require('./data/models/member');//人表
-      data_mg.group = require('./data/models/group');//圈子表
-      data_mg.album = require('./data/models/album');//相册表
-      data_mg.friend = require('./data/models/friend');//朋友表
-      data_mg.photo = require('./data/models/photo');//相片表
-      data_mg.message = require('./data/models/message');//消息表
-      data_mg.a_p = require('./data/models/a_p');//相册相片表
-      data_mg.g_m = require('./data/models/g_m');//圈子成员表
-      data_mg.password = require('./data/models/password');//密码表
+      data_mg.admin = require('./data/models/admin');//管理员表
+      data_mg.announcement = require('./data/models/announcement');//公告表
+      data_mg.client = require('./data/models/client');//客户表
+      data_mg.client_password = require('./data/models/client_password');//密码表
+      data_mg.client_product = require('./data/models/client_product');//购买表
+      data_mg.client_redPacket = require('./data/models/client_redPacket');//客户红包表
+      data_mg.company = require('./data/models/company');//企业表
+      data_mg.page_promoGroup = require('./data/models/page_promoGroup');//页面宣传组表
+      data_mg.product = require('./data/models/product');//商品表
+      data_mg.promoGroup_promotion = require('./data/models/promoGroup_promotion');//宣传组对宣传表
+      data_mg.promotion = require('./data/models/promotion');//宣传表
+      data_mg.recruit = require('./data/models/recruit');//招聘表
+      data_mg.redPacket = require('./data/models/redPacket');//红包表
       data_mg.updateTime = require('./data/models/updateTime');//更新表
-      var newMember = new data_mg.member({
+     /* var newMember = new data_mg.member({
          id:"001",
          userName:"001",
          nickName:"001",
@@ -55,8 +59,7 @@ var app = require('./server')
                })
                
             })
-         }
-      });
+         */
 
  	 var io = require('socket.io').listen(app.target)
 app.target.listen(8888);
