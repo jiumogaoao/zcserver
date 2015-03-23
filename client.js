@@ -3,39 +3,62 @@ function checkUser(socket,data,fn){
 	console.log("client/checkUser");
 	data.data="name";
 	var result={code:1};
-if(socket){
+	data_mg.client.find({userName:data.data},function(err,doc){
+		if(doc&&doc.length){
+			result.code=0
+			}else{
+				result.code=1
+				}
+			if(socket){
 	 	socket.emit("client_checkUser",result);
 	 }
 	 	else if(fn){
 	 		var returnString = JSON.stringify(result);
 	 		fn(returnString);
-	 	}		
+	 	}
+		})
+		
 };
 
 function checkPhone(socket,data,fn){
 	console.log("client/checkPhone");
 	data.data = "phone";
 	var result={code:1};
-if(socket){
+	data_mg.client.find({phone:data.data},function(err,doc){
+		if(doc&&doc.length){
+			result.code=0
+			}else{
+				result.code=1
+				}
+		if(socket){
 	 	socket.emit("client_checkPhone",result);
 	 }
 	 	else if(fn){
 	 		var returnString = JSON.stringify(result);
 	 		fn(returnString);
-	 	}		
+	 	}
+		})
+		
 };
 
 function checkEmail(socket,data,fn){
 	console.log("client/checkEmail");
 	data.data = "email";
 	var result={code:1};
-if(socket){
+	data_mg.client.find({phone:data.data},function(err,doc){
+		if(doc&&doc.length){
+			result.code=0
+			}else{
+				result.code=1
+				}
+		if(socket){
 	 	socket.emit("client_checkEmail",result);
 	 }
 	 	else if(fn){
 	 		var returnString = JSON.stringify(result);
 	 		fn(returnString);
-	 	}		
+	 	}	
+		})
 };
 
 function login(socket,data,fn){
@@ -46,13 +69,33 @@ function login(socket,data,fn){
 					code:1,
 					data:{"id":"001","type":1,"userName":"aa","image":"http://","place":"bb","phone":"6575798","email":"dcghf@tgh.com","name":"fdgh","contacts":"sddfsf","contactsPhone":"34242","record":"本科","university":"你妹的学校","job":"做你妹","company":"你妹的"}
 					};
-if(socket){
+					
+	var returnFunction=function(){
+		if(socket){
 	 	socket.emit("client_login",result);
 	 }
 	 	else if(fn){
 	 		var returnString = JSON.stringify(result);
 	 		fn(returnString);
-	 	}		
+	 	}
+		}				
+					
+	data_mg.client.$where('this.userName == '+data.data.userName+' || this.email == '+data.data.userName+' || this.phone == '+data.data.userName).exec(function(err,doc){
+		if(doc&&doc.length){
+			data_mg.client_password.findOne({"parentKey":doc.id,"childKey":data.data.passWord},function(err,docA){
+				if(docA){
+					result.code=1;
+					result.data=doc;
+					}else{
+						result.code=0;
+						}
+				returnFunction();
+				})
+			}else{result.code=0;
+			returnFunction();
+			}
+		})
+		
 };
 
 function register(socket,data,fn){
@@ -71,16 +114,41 @@ function register(socket,data,fn){
 		"record":"本科",/*学历*/
 		"university":"华农",/*毕业院校*/
 		"job":"这个职位",/*职位*/
-		"company":"公司"/*公司*/
+		"company":"公司",/*公司*/
+		"password":"123456"/*密码*/
 	}
 	var result={code:1};
-if(socket){
+	var returnFn=function(){
+		if(socket){
 	 	socket.emit("client_register",result);
 	 }
 	 	else if(fn){
 	 		var returnString = JSON.stringify(result);
 	 		fn(returnString);
-	 	}		
+	 	}	
+		}
+	var newClient=new data_mg.client(data.data)
+	newClient.save(function(err){
+		if(err){
+			result.code=0;
+			returnFn();
+			}else{
+				var newPassword=new client_password({
+					"parentKey":data.data.id,
+					"childKey":data.data.password,
+					})
+				newPassword.save(function(errA){
+					if(errA){
+						result.code=0
+						}else{
+							result.code=1
+							}
+						returnFn();
+					})
+				}
+			
+		})
+	
 };
 
 function resetKey(socket,data,fn){
@@ -91,13 +159,21 @@ function resetKey(socket,data,fn){
 				newKey:"532424"/*新密码*/
 				}
 	var result={code:1};
-if(socket){
+	data_mg.client.update({"parentKey":data.data.id,"childKey":data.data.oldKey},{"childKey":data.data.newKey},{},function(err){
+		if(err){
+			result.code=0
+			}else{
+				result.code=1
+				}
+			if(socket){
 	 	socket.emit("client_resetKey",result);
 	 }
 	 	else if(fn){
 	 		var returnString = JSON.stringify(result);
 	 		fn(returnString);
-	 	}		
+	 	}
+		})
+		
 };
 
 function get(socket,data,fn){
