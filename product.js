@@ -1,6 +1,6 @@
 function get(socket,data,fn){
 	console.log("product/get");
-	data.data = null/*不用传*/
+	data.data = 10086/*不用传*/
 	var result={
 		code : 1,
 		time : 10086,
@@ -11,13 +11,38 @@ function get(socket,data,fn){
 				{"id":"004","title":"aa","subhead":"nnnn","image":["http://","http://"],"price":1000,"costPrice":2000,"money":20000,"payed":10000,"payedCount":10,"copy":20,"maxTime":10086,"minUnit":1,"maxUnit":200,"tax":8,"area":1223,"costUnitPrice":10,"UnitPrice":9,"developer":"你妹","place":"那个地址","decorate":"一般","propertyType":"公寓","stratTime":0,"buildTime":1024,"rightType":"商业用房","haveLease":0,"yearReturn":"15%以上"}
 				]
 		};
-if(socket){
+	var returnFn=function(){
+		if(socket){
 	 	socket.emit("product_get",result);
 	 }
 	 	else if(fn){
 	 		var returnString = JSON.stringify(result);
 	 		fn(returnString);
-	 	}		
+	 	}
+		}
+	data_mg.updateTime.find({"parentKey":"product"},function(err,doc){
+		if(err){
+			result.code=0
+			returnFn()
+			}else{
+				if(doc&&doc.length&&doc[0].childKey>data.data){
+					result.time=doc[0].childKey;
+					data_mg.product.find({},function(errA,docA){
+						if(errA){
+							result.code=0
+							}else{
+								result.code=1;
+								result.data=docA
+								}
+							returnFn()
+						})
+					}else{
+						result.code=2
+						returnFn()
+						}
+				}
+		})
+		
 };
 
 function add(socket,data,fn){
@@ -50,13 +75,32 @@ function add(socket,data,fn){
 				"yearReturn":"15%以上"/*年收益率*/
 			}
 	var result={code:1};
-if(socket){
+	var returnFn=function(){
+		if(socket){
 	 	socket.emit("product_add",result);
 	 }
 	 	else if(fn){
 	 		var returnString = JSON.stringify(result);
 	 		fn(returnString);
-	 	}		
+	 	}
+		}
+	var newProduct=new data_mg.product(data.data);
+	newProduct.save(function(err){
+		if(err){
+			result.code=0
+			returnFn()
+			}else{
+				data_mg.updateTime.update({"parentKey":"product"},{$set:{"childKey":new Date().getTime()}},{},function(errA){
+					if(errA){
+						result.code=0
+						}else{
+							result.code=1
+							}
+						returnFn()
+					})
+				}
+		})
+		
 };
 
 function edit(socket,data,fn){
@@ -89,26 +133,62 @@ function edit(socket,data,fn){
 				"yearReturn":"15%以上"/*年收益率*/
 			}
 	var result={code:1};
-if(socket){
+	var returnFn=function(){
+		if(socket){
 	 	socket.emit("product_edit",result);
 	 }
 	 	else if(fn){
 	 		var returnString = JSON.stringify(result);
 	 		fn(returnString);
-	 	}		
+	 	}
+		}
+	data_mg.product.update({"id":data.data.id},{$set:data.data},{},function(err){
+		if(err){
+			result.code=0
+			returnFn()
+			}else{
+				data_mg.updateTime.update({"parentKey":"product"},{$set:{"childKey":new Date().getTime()}},{},function(errA){
+					if(errA){
+						result.code=0
+						}else{
+							result.code=1
+							}
+						returnFn()
+					})
+				}
+		})
+		
 };
 
 function remove(socket,data,fn){
 	console.log("product/remove");
 	data.data="ddssfs"/*商品id*/
 	var result={code:1};
-if(socket){
+	var returnFn=function(){
+		if(socket){
 	 	socket.emit("product_remove",result);
 	 }
 	 	else if(fn){
 	 		var returnString = JSON.stringify(result);
 	 		fn(returnString);
-	 	}		
+	 	}	
+		}
+	data_mg.product.remove({"id":data.data},function(err){
+		if(err){
+			result.code=0
+			returnFn()
+			}else{
+				data_mg.updateTime.update({"parentKey":"product"},{$set:{"childKey":new Date().getTime()}},{},function(errA){
+					if(errA){
+						result.code=0
+						}else{
+							result.code=1
+							}
+						returnFn()
+					})
+				}
+		})
+	
 };
 
 exports.get=get;
