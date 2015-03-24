@@ -140,10 +140,18 @@ function register(socket,data,fn){
 				newPassword.save(function(errA){
 					if(errA){
 						result.code=0
-						}else{
-							result.code=1
-							}
 						returnFn();
+						}else{
+							data_mg.updateTime.update({"parentKey":"client"},{$set:{"childKey":new Date().getTime()}},{},function(errB){
+								if(errB){
+									result.code=0
+								}else{
+									result.code=1;
+								}
+								returnFn();
+							})
+							}
+						
 					})
 				}
 			
@@ -159,7 +167,7 @@ function resetKey(socket,data,fn){
 				newKey:"532424"/*新密码*/
 				}
 	var result={code:1};
-	data_mg.client.update({"parentKey":data.data.id,"childKey":data.data.oldKey},{"childKey":data.data.newKey},{},function(err){
+	data_mg.client.update({"parentKey":data.data.id,"childKey":data.data.oldKey},{$set:{"childKey":data.data.newKey}},{},function(err){
 		if(err){
 			result.code=0
 			}else{
@@ -178,7 +186,7 @@ function resetKey(socket,data,fn){
 
 function get(socket,data,fn){
 	console.log("client/get");
-	data.data = null/*不用传*/
+	data.data = 10086/*不用传*/
 	var result={
 		code:1,
 		time:10086,
@@ -190,13 +198,41 @@ function get(socket,data,fn){
 			{"id":"005","type":1,"userName":"aa","image":"http://","place":"bb","phone":"6575798","email":"dcghf@tgh.com","name":"fdgh","contacts":"sddfsf","contactsPhone":"34242","record":"本科","university":"你妹的学校","job":"做你妹","company":"你妹的"},
 		]
 		};
-if(socket){
-	 	socket.emit("client_get",result);
-	 }
-	 	else if(fn){
-	 		var returnString = JSON.stringify(result);
-	 		fn(returnString);
-	 	}		
+		var returnFn=function(){
+			if(socket){
+		 		socket.emit("client_get",result);
+		 	}
+		 	else if(fn){
+		 		var returnString = JSON.stringify(result);
+		 		fn(returnString);
+		 	}
+		}
+data_mg.updateTime.find({"parentKey":"client"},function(err,doc){
+	if(err){
+		result.code=0;
+		returnFn();
+	}else{
+		if(doc&&doc.length&&doc[0]>data.data){
+			result.time=doc.childKey;
+			data_mg.client.find({},function(errA,docA){
+				if(errA){
+					result.code=0;
+				}else{
+					if(docA){
+						result.code=1
+						result.data=docA
+					}
+				}
+				returnFn();
+			})
+		}else{
+			result.code=2;
+			returnFn();
+		}
+	}
+	
+})
+		
 };
 
 function add(socket,data,fn){
@@ -218,13 +254,32 @@ function add(socket,data,fn){
 		"company":"公司"/*公司*/
 	}
 	var result={code:1};
-if(socket){
+	var returnFn=function(){
+		if(socket){
 	 	socket.emit("client_add",result);
 	 }
 	 	else if(fn){
 	 		var returnString = JSON.stringify(result);
 	 		fn(returnString);
-	 	}		
+	 	}
+	}
+	var newClient=new data_mg.client(data.data);
+	newClient.save(function(err){
+		if(err){
+			result.code=0;
+			returnFn()
+		}else{
+			data_mg.updateTime.update({"parentKey":"client"},{$set:{"childKey":new Date().getTime()}},{},function(errA){
+				if(errA){
+					result.code=0
+				}else{
+					result.code=1;
+				}
+				returnFn();
+			})
+		}
+	})
+		
 };
 
 function edit(socket,data,fn){
@@ -246,26 +301,62 @@ function edit(socket,data,fn){
 		"company":"公司"/*公司*/
 	}
 	var result={code:1};
-if(socket){
+	var returnFn=function(){
+		if(socket){
 	 	socket.emit("client_edit",result);
 	 }
 	 	else if(fn){
 	 		var returnString = JSON.stringify(result);
 	 		fn(returnString);
-	 	}		
+	 	}
+	}
+	data_mg.client.update({"id":data.data.id},{$set:data.data},{},function(err){
+		if(err){
+			result.code=0
+			returnFn()
+		}else{
+			data_mg.updateTime({"parentKey":"client"},{$set:{"childKey":new Date().getTime()}},{},function(errA){
+				if(errA){
+					result.code=0
+				}else{
+					result.code=1
+				}
+				returnFn();
+			})
+		}
+	})
+		
 };
 
 function remove(socket,data,fn){
 	console.log("client/edit");
 	data.data = "ddssfs"/*商品id*/
 	var result={code:1};
-if(socket){
+	var returnFn=function(){
+		if(socket){
 	 	socket.emit("client_edit",result);
 	 }
 	 	else if(fn){
 	 		var returnString = JSON.stringify(result);
 	 		fn(returnString);
-	 	}		
+	 	}	
+	}
+	data_mg.client.remove({"id":data.data},function(err){
+		if(err){
+			result.code=0;
+			returnFn()
+		}else{
+			data_mg.updateTime.update({"parentKey":"client"},{$set:{"childKey":new Date().getTime()}},{},function(errA){
+				if(errA){
+					result.code=0
+				}else{
+					result.code=1
+				}
+				returnFn()
+			})
+		}
+	})
+	
 };
 
 exports.checkUser=checkUser;

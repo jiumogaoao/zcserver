@@ -12,13 +12,38 @@ function get(socket,data,fn){
 								{"id":"005","title":"dhfkh","message":"edgdf","start":0,"end":1008611}
 								]
 						};
-if(socket){
+	var returnFn=function(){
+		if(socket){
 	 	socket.emit("company_get",result);
 	 }
 	 	else if(fn){
 	 		var returnString = JSON.stringify(result);
 	 		fn(returnString);
-	 	}		
+	 	}	
+	}
+	data_mg.updateTime.find({"parentKey":"company"},function(err,doc){
+		if(err){
+			result.code=0;
+			returnFn()
+		}else{
+			if(doc&&doc.length&&doc[0].childKey>data.data){
+				result.time=doc[0].childKey
+				data_mg.company.find({},function(errA,docA){
+					if(errA){
+						result.code=0
+					}else{
+						result.code=1;
+						result.data=docA
+					}
+					returnFn()
+				})
+			}else{
+				result.code=2
+				returnFn()
+			}
+		}
+	})
+	
 };
 
 function add(socket,data,fn){
@@ -31,13 +56,32 @@ function add(socket,data,fn){
 		"end":0/*结束时间*/
 		}
 	var result={code:1};
-if(socket){
+	var returnFn=function(){
+		if(socket){
 	 	socket.emit("company_add",result);
 	 }
 	 	else if(fn){
 	 		var returnString = JSON.stringify(result);
 	 		fn(returnString);
-	 	}		
+	 	}
+	}
+	var newCompany=new data_mg.company(data.data);
+	newCompany.save(function(err){
+		if(err){
+			result.code=0;
+			returnFn();
+		}else{
+			data_mg.updateTime.update({"parentKey":"company"},{$set:{"childKey":new Date().getTime()}},{},function(errA){
+				if(errA){
+					result.code=0
+				}else{
+					result.code=1
+				}
+				returnFn();
+			})
+		}
+	});
+		
 };
 
 function edit(socket,data,fn){
@@ -50,26 +94,62 @@ function edit(socket,data,fn){
 		"end":0/*结束时间*/
 		}
 	var result={code:1};
-if(socket){
+	var returnFn=function(){
+		if(socket){
 	 	socket.emit("company_edit",result);
 	 }
 	 	else if(fn){
 	 		var returnString = JSON.stringify(result);
 	 		fn(returnString);
-	 	}		
+	 	}	
+	}
+	data_mg.company.update({"id":data.data.id},{$set:data.data},{},function(err){
+		if(err){
+			result.code=0;
+			returnFn()
+		}else{
+			data_mg.updateTime.update({"parentKey":"company"},{$set:{"childKey":new Date().getTime()}},{},function(err){
+				if(err){
+					result.code=0
+				}else{
+					result.code=1
+				}
+				returnFn()
+			})
+		}
+	})
+	
 };
 
 function remove(socket,data,fn){
 	console.log("company/remove");
 	data.data="dfsf"/*资料id*/
 	var result={code:1};
-if(socket){
+	var returnFn=function(){
+		if(socket){
 	 	socket.emit("company_remove",result);
 	 }
 	 	else if(fn){
 	 		var returnString = JSON.stringify(result);
 	 		fn(returnString);
-	 	}		
+	 	}
+	}
+	data_mg.company.remove({"id":data.data},function(err){
+		if(err){
+			result.code=0;
+			returnFn()
+		}else{
+			data_mg.updateTime.update({"parentKey":"company"},{$set:{"childKey":new Date().getTime()}},{},function(errA){
+				if(errA){
+					result.code=0
+				}else{
+					result.code=1
+				}
+				returnFn();
+			})
+		}
+	})
+		
 };
 
 exports.get=get;
