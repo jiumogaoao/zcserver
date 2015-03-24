@@ -1,6 +1,6 @@
 function get(socket,data,fn){
 	console.log("redPacket/get");
-	data.data = null/*不传*/
+	data.data = 10086/*不传*/
 	var result={
 		code:1,
 		data:[
@@ -9,13 +9,36 @@ function get(socket,data,fn){
 								{"id":"003","userId":"001","money":0,"type":0,"strat":0,"end":0}
 								]
 	};
-if(socket){
+	var returnFn=function(){
+		if(socket){
 	 	socket.emit("redPacket_get",result);
 	 }
 	 	else if(fn){
 	 		var returnString = JSON.stringify(result);
 	 		fn(returnString);
-	 	}		
+	 	}
+		}
+	data_mg.updateTime.find({"parentKey":"redPacket"},function(err,doc){
+		if(err){
+			result.code=0
+			returnFn()
+			}else{
+				if(doc&&doc.length&&doc[0].childKey>data.data){
+					result.time=doc[0].childKey
+					data_mg.redPacket.find({},function(errA,docA){
+						if(errA){
+							result.code=0
+							}else{
+								result.code=1
+								result.data=docA
+								}
+								returnFn()
+						})
+					}
+				
+				}
+		})
+		
 };
 
 function add(socket,data,fn){
@@ -29,13 +52,32 @@ function add(socket,data,fn){
 		"end":0/*消费日期*/
 		}
 	var result={code:1};
-if(socket){
+	var returnFn=function(){
+		if(socket){
 	 	socket.emit("redPacket_add",result);
 	 }
 	 	else if(fn){
 	 		var returnString = JSON.stringify(result);
 	 		fn(returnString);
-	 	}		
+	 	}
+		}
+	var newRedPacket=new data_mg.redPacket(data.data);
+	newRedPacket.save(function(err){
+		if(err){
+			result.code=0
+			returnFn();
+			}else{
+				data_mg.updateTime.update({"parentKet":"redPacket"},{$set:{"childKey":new Date().getTime()}},{},function(errA){
+					if(errA){
+						result.code=0
+						}else{
+							result.code=1
+							}
+						returnFn();
+					})
+				}
+		})
+		
 };
 
 function detail(socket,data,fn){
@@ -50,13 +92,23 @@ function detail(socket,data,fn){
 								{"id":"003","userId":"001","money":0,"type":0,"strat":0,"end":0}
 								]
 							};
-if(socket){
+	data_mg.redPacket.find({"userId":data.data},function(err,doc){
+		if(err){
+			result.code=0
+			}else{
+				result.code=1;
+				result.data=doc
+				}
+			if(socket){
 	 	socket.emit("redPacket_detail",result);
 	 }
 	 	else if(fn){
 	 		var returnString = JSON.stringify(result);
 	 		fn(returnString);
-	 	}		
+	 	}
+		})
+	
+		
 };
 
 exports.get=get;
