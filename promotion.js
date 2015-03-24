@@ -1,12 +1,12 @@
 function get(socket,data,fn){
 	console.log("promotion/get");
-	data.data=null/*不用传*/
+	data.data=10086/*不用传*/
 	var result={
 		code : 1,
 		time : 10086,
 		data : {
-			"index":{
-						"visualPic":{
+			"index":[
+						{
 							id:"001",
 							name:"首页大图",
 							dsc:"不说",
@@ -14,7 +14,7 @@ function get(socket,data,fn){
 									{"id":"001","name":"","image":"http://","dsc":"","job":"",group:"001"}
 								]
 						},
-						"introduceVideo":{
+						{
 							id:"002",
 							name:"我们是做什么的",
 							dsc:"提供最低的投资们门槛、最赚钱的投资模式、最简单的投资流程，助你实现投资梦想。",
@@ -24,14 +24,14 @@ function get(socket,data,fn){
 									{"id":"004","name":"大佬观点","image":"http://","dsc":"投资新观点，专业权威解读","job":"",group:"002"},
 								]
 						},
-						"introducePic":{id:"003",
+						{id:"003",
 							name:"首页下部大图",
 							dsc:"不说",
 							data:[
 									{"id":"005","name":"","image":"http://","dsc":"","job":"",group:"003"}
 								]
 						},
-						"visualPic":{id:"004",
+							{id:"004",
 							name:"360°全方位风险控制",
 							dsc:"风险控制小组由专业、稳健、实战经验丰富的房地产相关产业链专家组成，从投前筛选、投后管理到获利退出，全方位为众筹人保驾护航。",
 							data:[
@@ -41,8 +41,8 @@ function get(socket,data,fn){
 									{"id":"009","name":"李明","image":"http://","dsc":"沪港国际咨询集团副总经理，丰富的咨询、会计及评估领域服务经验","job":"评估",group:"004"},
 									{"id":"010","name":"郑福泉","image":"http://","dsc":"中瑞岳华税务师事务所合伙人，曾任百安居中国税务总监","job":"税务",group:"004"}
 								]
-						}
-					},
+							}
+					],
 			"mode":[
 					{id:"005",
 					name:"众筹模式",
@@ -134,13 +134,74 @@ function get(socket,data,fn){
 					]
 			}
 		};
-if(socket){
+	var returnFn=function(){
+		if(socket){
 	 	socket.emit("promotion_get",result);
 	 }
 	 	else if(fn){
 	 		var returnString = JSON.stringify(result);
 	 		fn(returnString);
-	 	}		
+	 	}
+	}
+	data_mg.updateTime.find({"parentKey":"promotion"},function(err,doc){
+		if(err){
+			result.code=0
+			returnFn()
+		}else{
+			if(doc&&doc.length&&doc[0].childKey>data.data){
+				result.time=doc.childKey;
+				data_mg.page_promoGroup.find({},function(errA,docA){
+					if(errA){
+						result.code=0
+						returnFn()
+					}else{
+						data_mg.promoGroup_promotion.find({},function(errB,docB){
+							if(errB){
+								result.code=0
+								returnFn()
+							}else{
+								var proGroup={};
+								for(var group in docB){
+									if(!proGroup[docB[group].parentKey]){
+										proGroup[docB[group].parentKey]=[];
+									}
+									proGroup[docB[group].parentKey].push(docB[group].childKey)
+								}
+								data_mg.promotion.find({},function(errC,docC){
+									if(errC){
+										result.code=0
+										returnFn()
+									}else{
+										result.code=1;
+										result.data={};
+										var proArray={};
+										for (var pro in docC){
+											proArray[docC[pro].id]=docC[pro]
+										}
+										for(var page in docA){
+											if(!result.data[docA[page].parentKey]){
+												result.data[docA[page].parentKey]=[]
+											}
+											for(var i=0;i<proGroup[docA[page].childKey].length;i++){
+												proArray[docA[page].childKey].data.push(proArray[proGroup[docA[page].childKey][i]])
+											}
+											result.data[docA[page].parentKey].push(proArray[docA[page].childKey]);
+											
+										}
+										returnFn()
+									}
+								})
+							}
+						})
+					}
+				})
+			}else{
+				result.code=2
+				returnFn()
+			}
+		}
+	})
+		
 };
 
 function edit(socket,data,fn){
@@ -156,13 +217,32 @@ function edit(socket,data,fn){
 						}] 
 	}
 	var result={code:1};
-if(socket){
+	var returnFn=function(){
+		if(socket){
 	 	socket.emit("promotion_edit",result);
 	 }
 	 	else if(fn){
 	 		var returnString = JSON.stringify(result);
 	 		fn(returnString);
-	 	}		
+	 	}
+	}
+	for (var pro=0 ;pro< data.data.data.length;pro++){
+		data_mg.promotion.update({"id":data.data.data[pro].id},{$set:data.data.data[pro]},{},function(err){
+			if(err){result.code=0}else if(pro==data.data.data.length-1){
+				data_mg.updateTime.update({"parentKey":"promotion"},{$set:{"childKey":new Date().getTime()}},{},function(errA){
+					if(errA){
+						result.code=0
+					}else{
+						result.code=1
+					}
+					returnFn()
+				})
+			}
+
+		})
+	}
+	
+		
 };
 
 
