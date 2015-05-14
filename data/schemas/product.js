@@ -25,6 +25,7 @@ var MemberSchema = new mongoose.Schema({
 		"buildTime":Number,/*建造时间*/
 		"rightType":String,/*产权类型*/
 		"haveLease":String,/*有否租约*/
-		"yearReturn":String/*年收益率*/
+		"yearReturn":String,/*年收益率*/
+		"more":Number
 	})
 module.exports = MemberSchema;
