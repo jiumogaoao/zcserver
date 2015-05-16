@@ -7,7 +7,7 @@ var app = require('./server')
    , url = require("url")
    , query = require("querystring")
    , server = {
-   	account : require('./account'),
+   	deal : require('./deal'),
       admin : require('./admin'),
       announcement : require('./announcement'),
       client : require('./client'),
@@ -19,7 +19,7 @@ var app = require('./server')
    }
 
    var dbURL="mongodb://localhost/talk"
-   global.db = require("mongoose").connect(dbURL)
+   global.db = require("mongoose").connect(dbURL);
    global.data_mg = {}
       data_mg.admin = require('./data/models/admin');//管理员表
       data_mg.announcement = require('./data/models/announcement');//公告表
@@ -35,6 +35,8 @@ var app = require('./server')
       data_mg.recruit = require('./data/models/recruit');//招聘表
       data_mg.redPacket = require('./data/models/redPacket');//红包表
       data_mg.updateTime = require('./data/models/updateTime');//更新表
+      data_mg.deal = require('./data/models/deal');//交易表
+      data_mg.bind = require('./data/models/bind');//交易表
      /* var newMember = new data_mg.member({
          id:"001",
          userName:"001",

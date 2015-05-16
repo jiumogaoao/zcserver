@@ -329,7 +329,7 @@ function edit(socket,data,fn){
 };
 
 function remove(socket,data,fn){
-	console.log("client/edit");
+	console.log("client/remove");
 	data.data = "ddssfs"/*商品id*/
 	var result={code:1};
 	var returnFn=function(){
@@ -358,7 +358,67 @@ function remove(socket,data,fn){
 	})
 	
 };
+function getSafeQusetion(socket,data,fn){
+	console.log("client/getSafeQusetion");
+	var result={code:1};
+if(socket){
+	 	socket.emit("client_getSafeQusetion",result);
+	 }
+	 	else if(fn){
+	 		var returnString = JSON.stringify(result);
+	 		fn(returnString);
+	 	}		
+};
 
+function checkSafeQusetion(socket,data,fn){
+	console.log("client/checkSafeQusetion");
+	var result={code:1};
+if(socket){
+	 	socket.emit("client_checkSafeQusetion",result);
+	 }
+	 	else if(fn){
+	 		var returnString = JSON.stringify(result);
+	 		fn(returnString);
+	 	}		
+};
+
+function bind(socket,data,fn){
+	console.log("client/bind");
+	var result={code:1};
+if(socket){
+	 	socket.emit("client_bind",result);
+	 }
+	 	else if(fn){
+	 		var returnString = JSON.stringify(result);
+	 		fn(returnString);
+	 	}		
+};
+
+function getBindCode(socket,data,fn){
+	console.log("client/getBindCode");
+	var result={code:1};
+if(socket){
+	 	socket.emit("client_getBindCode",result);
+	 }
+	 	else if(fn){
+	 		var returnString = JSON.stringify(result);
+	 		fn(returnString);
+	 	}		
+};
+
+function getBind(socket,data,fn){
+	console.log("client/getBind");
+	var result={code:1};
+if(socket){
+	 	socket.emit("client_getBind",result);
+	 }
+	 	else if(fn){
+	 		var returnString = JSON.stringify(result);
+	 		fn(returnString);
+	 	}		
+};
+exports.getSafeQusetion=getSafeQusetion;
+exports.checkSafeQusetion=checkSafeQusetion;
 exports.checkUser=checkUser;
 exports.checkPhone=checkPhone;
 exports.checkEmail=checkEmail;
@@ -369,3 +429,6 @@ exports.get=get;
 exports.add=add;
 exports.edit=edit;
 exports.remove=remove;
+exports.bind=bind;
+exports.getBindCode=getBindCode;
+exports.getBind=getBind;

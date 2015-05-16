@@ -4,7 +4,7 @@ var event = new EventEmitter();
 var catchs = {};
 var callBackFn = function(data){}
 var server = {
-   		account : require('./account'),
+   		deal : require('./deal'),
  		admin : require('./admin'),
  		announcement : require('./announcement'),
  		client : require('./client'),

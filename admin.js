@@ -114,7 +114,7 @@ function edit(socket,data,fn){
 	 		fn(returnString);
 	 	}	
 	}
-	data_mg.admin.update({"id":data.data.id},{$.set:data.data},{},function(err){
+	data_mg.admin.update({"id":data.data.id},{$set:data.data},{},function(err){
 		if(err){
 			result.code=0
 			returnFn()

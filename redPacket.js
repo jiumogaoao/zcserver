@@ -112,5 +112,5 @@ function detail(socket,data,fn){
 };
 
 exports.get=get;
-exports.edit=edit;
+exports.add=add;
 exports.detail=detail;
