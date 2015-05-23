@@ -21,6 +21,8 @@ function get(socket,data,fn){
 			 		fn(returnString);
 			 	}
 		}
+		returnFn();
+		return;
 		data_mg.updateTime.find({"parentKey":"announcement"},function(err,doc){
 		if(err){
 			result.code=0;

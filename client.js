@@ -79,7 +79,8 @@ function login(socket,data,fn){
 	 		fn(returnString);
 	 	}
 		}				
-					
+	returnFunction();
+	return;				
 	data_mg.client.$where('this.userName == '+data.data.userName+' || this.email == '+data.data.userName+' || this.phone == '+data.data.userName).exec(function(err,doc){
 		if(doc&&doc.length){
 			data_mg.client_password.findOne({"parentKey":doc.id,"childKey":data.data.passWord},function(err,docA){
