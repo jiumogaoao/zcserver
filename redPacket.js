@@ -4,9 +4,9 @@ function get(socket,data,fn){
 	var result={
 		code:1,
 		data:[
-								{"id":"001","userId":"001","money":0,"type":0,"strat":0,"end":0},
-								{"id":"002","userId":"001","money":0,"type":0,"strat":0,"end":0},
-								{"id":"003","userId":"001","money":0,"type":0,"strat":0,"end":0}
+								{"id":"001","userId":"001","money":0,"type":"0","strat":0,"end":0},
+								{"id":"002","userId":"001","money":0,"type":"1","strat":0,"end":0},
+								{"id":"003","userId":"001","money":0,"type":"0","strat":0,"end":0}
 								]
 	};
 	var returnFn=function(){
@@ -18,6 +18,7 @@ function get(socket,data,fn){
 	 		fn(returnString);
 	 	}
 		}
+		returnFn();return;
 	data_mg.updateTime.find({"parentKey":"redPacket"},function(err,doc){
 		if(err){
 			result.code=0

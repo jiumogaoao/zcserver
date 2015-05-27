@@ -5,10 +5,10 @@ function get(socket,data,fn){
 					code:1,
 					time:10086,
 					data:[
-						{"id":"001","userName":"","client":false,"admin":false,"announcement":false,"recruit":false,"company":false,"product":false,"promotion":false,"redPacket":false},
-						{"id":"002","userName":"","client":false,"admin":false,"announcement":false,"recruit":false,"company":false,"product":false,"promotion":false,"redPacket":false},
-						{"id":"003","userName":"","client":false,"admin":false,"announcement":false,"recruit":false,"company":false,"product":false,"promotion":false,"redPacket":false},
-						{"id":"004","userName":"","client":false,"admin":false,"announcement":false,"recruit":false,"company":false,"product":false,"promotion":false,"redPacket":false}
+						{"id":"001","userName":"001","client":"1","admin":"2","announcement":"0","recruit":"0","company":"0","product":"0","promotion":"0","redPacket":"0"},
+						{"id":"002","userName":"002","client":"0","admin":"1","announcement":"2","recruit":"0","company":"0","product":"0","promotion":"0","redPacket":"0"},
+						{"id":"003","userName":"003","client":"0","admin":"0","announcement":"1","recruit":"2","company":"0","product":"0","promotion":"0","redPacket":"0"},
+						{"id":"004","userName":"004","client":"0","admin":"0","announcement":"0","recruit":"1","company":"2","product":"0","promotion":"0","redPacket":"0"}
 					]
 					};
 	var returnFn=function(){
@@ -20,6 +20,8 @@ function get(socket,data,fn){
 	 		fn(returnString);
 	 	}	
 	}
+	returnFn();
+	return;
 	data_mg.updateTime.find({"parentKey":"admin"},function(err,doc){
 		if(err){
 			result.code=0;

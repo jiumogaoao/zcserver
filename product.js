@@ -5,10 +5,10 @@ function get(socket,data,fn){
 		code : 1,
 		time : 10086,
 		data : [
-				{"id":"001","title":"aa","subhead":"nnnn","image":["http://","http://"],"price":1000,"costPrice":2000,"money":20000,"payed":10000,"payedCount":10,"copy":20,"maxTime":10086,"minUnit":1,"maxUnit":200,"tax":8,"area":1223,"costUnitPrice":10,"UnitPrice":9,"developer":"你妹","place":"那个地址","decorate":"一般","propertyType":"公寓","stratTime":0,"buildTime":1024,"rightType":"商业用房","haveLease":0,"yearReturn":"15%以上","more":0},
-				{"id":"002","title":"aa","subhead":"nnnn","image":["http://","http://"],"price":1000,"costPrice":2000,"money":20000,"payed":10000,"payedCount":10,"copy":20,"maxTime":10086,"minUnit":1,"maxUnit":200,"tax":8,"area":1223,"costUnitPrice":10,"UnitPrice":9,"developer":"你妹","place":"那个地址","decorate":"一般","propertyType":"公寓","stratTime":0,"buildTime":1024,"rightType":"商业用房","haveLease":0,"yearReturn":"15%以上","more":0},
-				{"id":"003","title":"aa","subhead":"nnnn","image":["http://","http://"],"price":1000,"costPrice":2000,"money":20000,"payed":10000,"payedCount":10,"copy":20,"maxTime":10086,"minUnit":1,"maxUnit":200,"tax":8,"area":1223,"costUnitPrice":10,"UnitPrice":9,"developer":"你妹","place":"那个地址","decorate":"一般","propertyType":"公寓","stratTime":0,"buildTime":1024,"rightType":"商业用房","haveLease":0,"yearReturn":"15%以上","more":0},
-				{"id":"004","title":"aa","subhead":"nnnn","image":["http://","http://"],"price":1000,"costPrice":2000,"money":20000,"payed":10000,"payedCount":10,"copy":20,"maxTime":10086,"minUnit":1,"maxUnit":200,"tax":8,"area":1223,"costUnitPrice":10,"UnitPrice":9,"developer":"你妹","place":"那个地址","decorate":"一般","propertyType":"公寓","stratTime":0,"buildTime":1024,"rightType":"商业用房","haveLease":0,"yearReturn":"15%以上","more":0}
+				{"id":"001","title":"aa","subhead":"nnnn","image":["http://","http://"],"price":1000,"costPrice":2000,"money":20000,"payed":10000,"payedCount":10,"copy":20,"maxTime":10086,"minUnit":1,"maxUnit":200,"tax":8,"area":1223,"costUnitPrice":10,"UnitPrice":9,"developer":"你妹","place":"那个地址","decorate":"0","propertyType":"1","stratTime":0,"buildTime":1024,"rightType":"2","haveLease":"0","yearReturn":"15%以上","more":0},
+				{"id":"002","title":"aa","subhead":"nnnn","image":["http://","http://"],"price":1000,"costPrice":2000,"money":20000,"payed":10000,"payedCount":10,"copy":20,"maxTime":10086,"minUnit":1,"maxUnit":200,"tax":8,"area":1223,"costUnitPrice":10,"UnitPrice":9,"developer":"你妹","place":"那个地址","decorate":"1","propertyType":"2","stratTime":0,"buildTime":1024,"rightType":"0","haveLease":"1","yearReturn":"15%以上","more":0},
+				{"id":"003","title":"aa","subhead":"nnnn","image":["http://","http://"],"price":1000,"costPrice":2000,"money":20000,"payed":10000,"payedCount":10,"copy":20,"maxTime":10086,"minUnit":1,"maxUnit":200,"tax":8,"area":1223,"costUnitPrice":10,"UnitPrice":9,"developer":"你妹","place":"那个地址","decorate":"2","propertyType":"0","stratTime":0,"buildTime":1024,"rightType":"1","haveLease":"0","yearReturn":"15%以上","more":0},
+				{"id":"004","title":"aa","subhead":"nnnn","image":["http://","http://"],"price":1000,"costPrice":2000,"money":20000,"payed":10000,"payedCount":10,"copy":20,"maxTime":10086,"minUnit":1,"maxUnit":200,"tax":8,"area":1223,"costUnitPrice":10,"UnitPrice":9,"developer":"你妹","place":"那个地址","decorate":"0","propertyType":"0","stratTime":0,"buildTime":1024,"rightType":"2","haveLease":"1","yearReturn":"15%以上","more":0}
 				]
 		};
 	var returnFn=function(){
@@ -20,6 +20,8 @@ function get(socket,data,fn){
 	 		fn(returnString);
 	 	}
 		}
+		returnFn();
+		return;
 	data_mg.updateTime.find({"parentKey":"product"},function(err,doc){
 		if(err){
 			result.code=0

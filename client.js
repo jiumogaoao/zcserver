@@ -208,6 +208,8 @@ function get(socket,data,fn){
 		 		fn(returnString);
 		 	}
 		}
+		returnFn();
+		return;
 data_mg.updateTime.find({"parentKey":"client"},function(err,doc){
 	if(err){
 		result.code=0;
