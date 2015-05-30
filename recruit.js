@@ -1,15 +1,11 @@
 function get(socket,data,fn){
 	console.log("recruit/get");
-	data.data = 10086/*更新时间*/
+	console.log(data)
 	var result={
-						code:1,
-						time:10086,
+						code:0,
+						time:0,
 						data:[
-						{"id":"001","title":"bhk","message":"fkdjf","start":0,"end":1008611},
-						{"id":"002","title":"bhk","message":"fkdjf","start":0,"end":1008611},
-						{"id":"003","title":"bhk","message":"fkdjf","start":0,"end":1008611},
-						{"id":"004","title":"bhk","message":"fkdjf","start":0,"end":1008611},
-						{"id":"005","title":"bhk","message":"fkdjf","start":0,"end":1008611}
+						
 						]
 						};
 	var returnFn=function(){
@@ -22,8 +18,7 @@ function get(socket,data,fn){
 	 	}
 		}
 
-		returnFn();
-		return;
+		
 	data_mg.updateTime.find({"parentKey":"recruit"},function(err,doc){
 		if(err){
 			result.code=0
@@ -51,14 +46,11 @@ function get(socket,data,fn){
 
 function add(socket,data,fn){
 	console.log("recruit/add");
-	data.data = {
-		"id":uuid(),/*id*/
-		"title":"dssfs",/*标题*/
-		"message":"sfsfs",/*内容*/
-		"start":0,/*生效时间*/
-		"end":0/*结束时间*/
+	if(typeof(data.data)=="string"){
+		data.data=JSON.parse(data.data)
 		}
-	var result={code:1};
+		console.log(data.data)
+	var result={code:0};
 	var returnFn=function(){
 		if(socket){
 	 	socket.emit("recruit_add",result);
@@ -68,14 +60,15 @@ function add(socket,data,fn){
 	 		fn(returnString);
 	 	}	
 		}
+		console.log("添加招聘")
 	var newRecruit=new data_mg.recruit(data.data);
 	newRecruit.save(function(err){
-		if(err){
+		if(err){console.log(err)
 			result.code=0
 			returnFn()
-			}else{
+			}else{console.log("更新时间")
 				data_mg.updateTime.update({"parentKey":"recruit"},{$set:{"childKey":new Date().getTime()}},{},function(errA){
-					if(errA){
+					if(errA){console.log(errA)
 						result.code=0
 						}else{
 							result.code=1
@@ -90,13 +83,10 @@ function add(socket,data,fn){
 
 function edit(socket,data,fn){
 	console.log("recruit/edit");
-	data.data = {
-		"id":"errdgd",/*id*/
-		"title":"dssfs",/*标题*/
-		"message":"sfsfs",/*内容*/
-		"start":0,/*生效时间*/
-		"end":0/*结束时间*/
+	if(typeof(data.data)=="string"){
+		data.data=JSON.parse(data.data)
 		}
+		console.log(data.data)
 	var result={code:1};
 	var returnFn=function(){
 		if(socket){
@@ -107,13 +97,14 @@ function edit(socket,data,fn){
 	 		fn(returnString);
 	 	}	
 		}
+		console.log("更新招聘")
 	data_mg.recruit.update({"id":data.data.id},{$set:data.data},{},function(err){
-		if(err){
+		if(err){console.log(err)
 			result.code=0
 			returnFn()
-			}else{
+			}else{console.log("更新时间")
 				data_mg.updateTime.update({"parentKey":"recruit"},{$set:{"childKey":new Date().getTime()}},{},function(errA){
-					if(errA){
+					if(errA){console.log(errA)
 						result.code=0
 						}else{
 							result.code=1
@@ -128,8 +119,8 @@ function edit(socket,data,fn){
 
 function remove(socket,data,fn){
 	console.log("recruit/remove");
-	data.data = "dsfsg"/*招聘id*/
-	var result={code:1};
+	console.log(data.data);
+	var result={code:0};
 	var returnFn=function(){
 		if(socket){
 	 	socket.emit("recruit_remove",result);

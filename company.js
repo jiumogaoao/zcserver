@@ -50,14 +50,11 @@ function get(socket,data,fn){
 
 function add(socket,data,fn){
 	console.log("company/add");
-	data.data={
-		"id":uuid(),/*id*/
-		"title":"erree",/*标题*/
-		"message":"erreer",/*内容*/
-		"start":0,/*生效时间*/
-		"end":0/*结束时间*/
+	if(typeof(data.data)=="string"){
+		data.data=JSON.parse(data.data)
 		}
-	var result={code:1};
+		console.log(data.data)
+	var result={code:0};
 	var returnFn=function(){
 		if(socket){
 	 	socket.emit("company_add",result);
@@ -88,14 +85,11 @@ function add(socket,data,fn){
 
 function edit(socket,data,fn){
 	console.log("company/edit");
-	data.data={
-		"id":"dsfs",/*id*/
-		"title":"erree",/*标题*/
-		"message":"erreer",/*内容*/
-		"start":0,/*生效时间*/
-		"end":0/*结束时间*/
+	if(typeof(data.data)=="string"){
+		data.data=JSON.parse(data.data)
 		}
-	var result={code:1};
+		console.log(data.data)
+	var result={code:0};
 	var returnFn=function(){
 		if(socket){
 	 	socket.emit("company_edit",result);
