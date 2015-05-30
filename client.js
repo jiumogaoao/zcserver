@@ -201,17 +201,12 @@ function resetKey(socket,data,fn){
 
 function get(socket,data,fn){
 	console.log("client/get");
-	data.data = 10086/*不用传*/
+	//data.data = 10086/*不用传*/
+	console.log(data.data)
 	var result={
-		code:1,
-		time:10086,
-		data:[
-			{"id":"001","type":1,"userName":"aa","image":"http://","place":"bb","phone":"6575798","email":"dcghf@tgh.com","name":"fdgh","contacts":"sddfsf","contactsPhone":"34242","record":"本科","university":"你妹的学校","job":"做你妹","company":"你妹的"},
-			{"id":"002","type":1,"userName":"aa","image":"http://","place":"bb","phone":"6575798","email":"dcghf@tgh.com","name":"fdgh","contacts":"sddfsf","contactsPhone":"34242","record":"本科","university":"你妹的学校","job":"做你妹","company":"你妹的"},
-			{"id":"003","type":1,"userName":"aa","image":"http://","place":"bb","phone":"6575798","email":"dcghf@tgh.com","name":"fdgh","contacts":"sddfsf","contactsPhone":"34242","record":"本科","university":"你妹的学校","job":"做你妹","company":"你妹的"},
-			{"id":"004","type":1,"userName":"aa","image":"http://","place":"bb","phone":"6575798","email":"dcghf@tgh.com","name":"fdgh","contacts":"sddfsf","contactsPhone":"34242","record":"本科","university":"你妹的学校","job":"做你妹","company":"你妹的"},
-			{"id":"005","type":1,"userName":"aa","image":"http://","place":"bb","phone":"6575798","email":"dcghf@tgh.com","name":"fdgh","contacts":"sddfsf","contactsPhone":"34242","record":"本科","university":"你妹的学校","job":"做你妹","company":"你妹的"},
-		]
+		code:0,
+		time:0,
+		data:[]
 		};
 		var returnFn=function(){
 			if(socket){
@@ -222,8 +217,7 @@ function get(socket,data,fn){
 		 		fn(returnString);
 		 	}
 		}
-		returnFn();
-		return;
+		
 data_mg.updateTime.find({"parentKey":"client"},function(err,doc){
 	if(err){
 		result.code=0;
@@ -231,7 +225,7 @@ data_mg.updateTime.find({"parentKey":"client"},function(err,doc){
 	}else{
 		if(doc&&doc.length&&doc[0]>data.data){
 			result.time=doc.childKey;
-			data_mg.client.find({},function(errA,docA){
+			data_mg.client.$where('this.type != 2').exec(function(errA,docA){
 				if(errA){
 					result.code=0;
 				}else{
@@ -342,7 +336,7 @@ function edit(socket,data,fn){
 
 function remove(socket,data,fn){
 	console.log("client/remove");
-	data.data = "ddssfs"/*商品id*/
+	//data.data = "ddssfs"/*商品id*/
 	var result={code:1};
 	var returnFn=function(){
 		if(socket){
@@ -438,7 +432,7 @@ exports.login=login;
 exports.register=register;
 exports.resetKey=resetKey;
 exports.get=get;
-exports.add=add;
+//exports.add=add;
 exports.edit=edit;
 exports.remove=remove;
 exports.bind=bind;

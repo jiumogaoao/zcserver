@@ -1,16 +1,10 @@
 function get(socket,data,fn){
 	console.log("announcement/get");
-	data.data=null/*不用传*/
+	console.log(data)
 	var result={
-		code:1,
-		time:10086,
-		data:[
-				{"id":"001","title":"中筹网金唐人：2015，房地产众筹怎么玩？","message":"中筹网金唐人：2015，房地产众筹怎么玩？","start":0,"end":0},
-				{"id":"002","title":"中筹网金唐人：2015，房地产众筹怎么玩？","message":"中筹网金唐人：2015，房地产众筹怎么玩？","start":0,"end":0},
-				{"id":"003","title":"中筹网金唐人：2015，房地产众筹怎么玩？","message":"中筹网金唐人：2015，房地产众筹怎么玩？","start":0,"end":0},
-				{"id":"004","title":"中筹网金唐人：2015，房地产众筹怎么玩？","message":"中筹网金唐人：2015，房地产众筹怎么玩？","start":0,"end":0},
-				{"id":"005","title":"中筹网金唐人：2015，房地产众筹怎么玩？","message":"中筹网金唐人：2015，房地产众筹怎么玩？","start":0,"end":0}
-			]
+		code:0,
+		time:0,
+		data:[]
 		};
 		var returnFn=function(){
 			if(socket){
@@ -21,8 +15,8 @@ function get(socket,data,fn){
 			 		fn(returnString);
 			 	}
 		}
-		returnFn();
-		return;
+		//returnFn();
+		//return;
 		data_mg.updateTime.find({"parentKey":"announcement"},function(err,doc){
 		if(err){
 			result.code=0;
@@ -51,14 +45,17 @@ function get(socket,data,fn){
 
 function add(socket,data,fn){
 	console.log("announcement/add");
-	data.data={
-		"id":uuid(),/*id*/
-		"title":"eee",/*标题*/
-		"message":"rewr",/*内容*/
-		"start":0,/*生效时间*/
-		"end":0/*结束时间*/
-		}
-	var result={code:1};
+	//data.data={
+		//"id":uuid(),/*id*/
+		//"title":"eee",/*标题*/
+		//"message":"rewr",/*内容*/
+		//"start":0,/*生效时间*/
+		//"end":0/*结束时间*/
+		//}
+		if(typeof(data.data)=="string"){
+			data.data=JSON.parse(data.data)
+			}
+	var result={code:0};
 	var returnFn=function(){
 		if(socket){
 		 	socket.emit("announcement_add",result);
@@ -69,13 +66,17 @@ function add(socket,data,fn){
 		 	}	
 	}
 	var newAnnouncement=new data_mg.announcement(data.data);
+	console.log("添加公告")
 	newAnnouncement.save(function(err){
 		if(err){
+			console.log(err)
 			result.code=0;
 			returnFn()
 		}else{
+			console.log("更新时间")
 			data_mg.updateTime.update({"parentKey":"announcement"},{$set:{"childKey":new Date().getTime()}},{},function(errA){
 				if(errA){
+					console.log(errA)
 					result.code=0
 				}else{
 					result.code=1
@@ -89,14 +90,11 @@ function add(socket,data,fn){
 
 function edit(socket,data,fn){
 	console.log("announcement/edit");
-	data.data={
-		"id":"sfs",/*id*/
-		"title":"eee",/*标题*/
-		"message":"rewr",/*内容*/
-		"start":0,/*生效时间*/
-		"end":0/*结束时间*/
-		}
-	var result={code:1};
+	if(typeof(data.data)=="string"){
+			data.data=JSON.parse(data.data)
+			}
+	console.log(data.data)
+	var result={code:0};
 	var returnFn=function(){
 		if(socket){
 	 	socket.emit("announcement_edit",result);
@@ -106,13 +104,17 @@ function edit(socket,data,fn){
 	 		fn(returnString);
 	 	}	
 	}
+	console.log("更新公告")
 	data_mg.announcement.update({"id":data.data.id},{$set:data.data},{},function(err){
 		if(err){
+			console.log(err)
 			result.code=0;
 			returnFn();
 		}else{
+			console.log("更新时间")
 			data_mg.updateTime.update({"parentKey":"announcement"},{$set:{"childKey":new Date().getTime()}},{},function(errA){
 				if(errA){
+					console.log(errA)
 					result.code=0
 				}else{
 					result.code=1
@@ -126,8 +128,9 @@ function edit(socket,data,fn){
 
 function remove(socket,data,fn){
 	console.log("announcement/remove");
-	data.data="ehdjk"/*id*/
-	var result={code:1};
+	//data.data="ehdjk"/*id*/
+	console.log(data.data);
+	var result={code:0};
 	var returnFn=function(){
 		if(socket){
 	 	socket.emit("announcement_remove",result);
@@ -137,13 +140,14 @@ function remove(socket,data,fn){
 	 		fn(returnString);
 	 	}	
 	}
+	console.log("删除公告")
 	data_mg.announcement.remove({"id":data.data},function(err){
-		if(err){
+		if(err){console.log(err)
 			result.code=0;
 			returnFn();
-		}else{
+		}else{console.log("更新时间")
 			data_mg.updateTime.update({"parentKey":"announcement"},{$set:{"childKey":new Date().getTime()}},function(errA){
-				if(errA){
+				if(errA){console.log(errA)
 					result.code=0
 				}else{
 					result.code=1
