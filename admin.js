@@ -1,15 +1,10 @@
 function get(socket,data,fn){
 	console.log("admin/get");
-	data.data = 10086/*不用传*/
+	console.log(data.data)
 	var result={
-					code:1,
-					time:10086,
-					data:[
-						{"id":"001","userName":"001","client":"1","admin":"2","announcement":"0","recruit":"0","company":"0","product":"0","promotion":"0","redPacket":"0"},
-						{"id":"002","userName":"002","client":"0","admin":"1","announcement":"2","recruit":"0","company":"0","product":"0","promotion":"0","redPacket":"0"},
-						{"id":"003","userName":"003","client":"0","admin":"0","announcement":"1","recruit":"2","company":"0","product":"0","promotion":"0","redPacket":"0"},
-						{"id":"004","userName":"004","client":"0","admin":"0","announcement":"0","recruit":"1","company":"2","product":"0","promotion":"0","redPacket":"0"}
-					]
+					code:0,
+					time:0,
+					data:[]
 					};
 	var returnFn=function(){
 		if(socket){
@@ -20,13 +15,14 @@ function get(socket,data,fn){
 	 		fn(returnString);
 	 	}	
 	}
-	returnFn();
-	return;
+	//returnFn();
+	//return;
 	data_mg.updateTime.find({"parentKey":"admin"},function(err,doc){
 		if(err){
 			result.code=0;
 			returnFn();
 		}else{
+			console.log(doc)
 			if(doc&&doc.length&&doc[0].childKey>data.data){
 				result.time=doc[0].childKey
 				data_mg.admin.find({},function(errA,docA){
@@ -49,20 +45,24 @@ function get(socket,data,fn){
 
 function add(socket,data,fn){
 	console.log("admin/add");
-	data.data = {
-		"id":uuid(),/*id*/
-		"userName":"sfdffgdgdgd",/*帐号*/
-		"type":2,/*类型,1普通用户2管理用户*/
-		"client":false,/*用户管理*/
-		"admin":false,/*管理员管理*/
-		"announcement":false,/*公告管理*/
-		"recruit":false,/*招聘管理*/
-		"company":false,/*企业信息管理*/
-		"product":false,/*商品管理*/
-		"promotion":false,/*宣传管理*/
-		"redPacket":false/*红包管理*/
+	if(typeof(data.data)=="string"){
+		data.data=JSON.parse(data.data)
 		}
-	var result={code:1};
+	data.data.password="123456"
+	var adminData = {
+		"id":data.data.id,/*id*/
+		"userName":data.data.userName,/*帐号*/
+		"client":"0",/*用户管理*/
+		"admin":"0",/*管理员管理*/
+		"announcement":"0",/*公告管理*/
+		"recruit":"0",/*招聘管理*/
+		"company":"0",/*企业信息管理*/
+		"product":"0",/*商品管理*/
+		"promotion":"0",/*宣传管理*/
+		"redPacket":"0"/*红包管理*/
+		}
+		
+	var result={code:0};
 	var returnFn=function(){
 		if(socket){
 	 	socket.emit("admin_add",result);
@@ -72,41 +72,68 @@ function add(socket,data,fn){
 	 		fn(returnString);
 	 	}	
 	}
-	var newAdmin=new data_mg(data.data);
-	newAdmin.save(function(err){
+	
+	var newClient=new data_mg.client(data.data)
+	newClient.save(function(err,Clientsc){
+		console.log(Clientsc)
 		if(err){
 			result.code=0;
-			returnFn()
-		}else{
-			data_mg.updateTime.update({"parentKey":"admin"},{$set:{"childKey":new Date().getTime()}},{},function(errA){
-				if(errA){
-					result.code=0
-				}else{
-					result.code=1
+			returnFn();
+			}else{
+				var newPassword=new data_mg.client_password({
+					"parentKey":data.data.id,
+					"childKey":data.data.password,
+					})
+				newPassword.save(function(errA,Passsc){
+					console.log(Passsc)
+					if(errA){
+						result.code=0
+						returnFn();
+						}else{
+							data_mg.updateTime.update({"parentKey":"client"},{$set:{"childKey":new Date().getTime()}},{},function(errB){
+								if(errB){
+									result.code=0
+									returnFn();
+								}else{
+									/*******************************/
+									var newAdmin=new data_mg.admin(adminData);
+									
+									newAdmin.save(function(err){
+										if(err){
+											result.code=0;
+											returnFn()
+										}else{
+											data_mg.updateTime.update({"parentKey":"admin"},{$set:{"childKey":new Date().getTime()}},{},function(errC){
+												if(errC){
+													result.code=0
+												}else{
+													result.code=1
+												}
+												returnFn()
+											})
+										}
+									});
+									/*******************************/
+								}
+								
+							})
+							}
+						
+					})
 				}
-				returnFn()
-			})
-		}
-	});
+			
+		})
 	
 };
 
 function edit(socket,data,fn){
 	console.log("admin/edit");
-	data.data = {
-		"id":"fssfs",/*id*/
-		"userName":"sfdffgdgdgd",/*帐号*/
-		"type":2,/*类型,1普通用户2管理用户*/
-		"client":false,/*用户管理*/
-		"admin":false,/*管理员管理*/
-		"announcement":false,/*公告管理*/
-		"recruit":false,/*招聘管理*/
-		"company":false,/*企业信息管理*/
-		"product":false,/*商品管理*/
-		"promotion":false,/*宣传管理*/
-		"redPacket":false/*红包管理*/
+
+	if(typeof(data.data)=="string"){
+		data.data=JSON.parse(data.data)
 		}
-	var result={code:1};
+		console.log(data.data);
+	var result={code:0};
 	var returnFn=function(){
 		if(socket){
 	 	socket.emit("admin_edit",result);
@@ -116,13 +143,17 @@ function edit(socket,data,fn){
 	 		fn(returnString);
 	 	}	
 	}
+	console.log("updateAdmin")
 	data_mg.admin.update({"id":data.data.id},{$set:data.data},{},function(err){
 		if(err){
+			console.log(err)
 			result.code=0
 			returnFn()
 		}else{
+			console.log("updateTime")
 			data_mg.updateTime.update({"parentKey":"admin"},{$set:{"childKey":new Date().getTime()}},{},function(errA){
 				if(errA){
+					console.log(errA)
 					result.code=0
 				}else{
 					result.code=1
@@ -136,8 +167,9 @@ function edit(socket,data,fn){
 
 function remove(socket,data,fn){
 	console.log("admin/remove");
-	data.data = "ddgdgd"/*管理员id*/
-	var result={code:1};
+	//data.data = "ddgdgd"/*管理员id*/
+	console.log(data.data);
+	var result={code:0};
 	var returnFn=function(){
 		if(socket){
 	 	socket.emit("admin_remove",result);
@@ -147,18 +179,41 @@ function remove(socket,data,fn){
 	 		fn(returnString);
 	 	}
 	}
+	console.log("删除admin")
 	data_mg.admin.remove({"id":data.data},function(err){
 		if(err){
+			console.log(err)
 			result.code=0
 			returnFn()
 		}else{
+			console.log("更新admin")
 			data_mg.updateTime.update({"parentKey":"admin"},{$set:{"childKey":new Date().getTime()}},{},function(errA){
 				if(errA){
-					result.code=0
+					console.log(errA)
+					result.code=0;
+					returnFn()
 				}else{
-					result.code=1
+					console.log("删除client")
+					data_mg.client.remove({"id":data.data},function(errB){
+						if(errB){
+							console.log(errB)
+							result.code=0
+							returnFn()
+							}else{
+								console.log("跟新client")
+								data_mg.updateTime.update({"parentKey":"client"},{$set:{"childKey":new Date().getTime()}},{},function(errC){
+								if(errC){
+							console.log(errC)
+							result.code=0}else{
+								result.code=1
+								}
+								returnFn()	
+									})
+								}
+						})
+
 				}
-				returnFn();
+
 			})
 		}
 	})

@@ -1,4 +1,4 @@
 var mongoose = require('mongoose');
 var memberSchema = require('../schemas/link');
-var member = mongoose.model('link',memberSchema);
+var member = mongoose.model('client_redPacket',memberSchema);
 module.exports = member;

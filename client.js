@@ -63,11 +63,15 @@ function checkEmail(socket,data,fn){
 
 function login(socket,data,fn){
 	console.log("client/login");
-	data.data = {"userName":"aa",/*登录名/手机/邮箱*/
-				"passWord":"djisk"}/*密码*/
+	//data.data = {"userName":"aa",/*登录名/手机/邮箱*/
+	//			"passWord":"djisk"}/*密码*/
+	if(typeof(data.data)=="string"){
+		data.data=JSON.parse(data.data)
+		}
+	console.log(data.data)
 	var result={
-					code:1,
-					data:{"id":"001","type":1,"userName":"aa","image":"http://","place":"bb","phone":"6575798","email":"dcghf@tgh.com","name":"fdgh","contacts":"sddfsf","contactsPhone":"34242","record":"本科","university":"你妹的学校","job":"做你妹","company":"你妹的"}
+					code:0,
+					data:{}
 					};
 					
 	var returnFunction=function(){
@@ -79,11 +83,15 @@ function login(socket,data,fn){
 	 		fn(returnString);
 	 	}
 		}				
-	returnFunction();
-	return;				
-	data_mg.client.$where('this.userName == '+data.data.userName+' || this.email == '+data.data.userName+' || this.phone == '+data.data.userName).exec(function(err,doc){
+	//returnFunction();
+	//return;				
+	data_mg.client.$where('this.userName == "'+data.data.userName+'" || this.email == "'+data.data.userName+'" || this.phone == "'+data.data.userName+'"').exec(function(err,doc){
+		console.log(err)
+		console.log(doc)
 		if(doc&&doc.length){
-			data_mg.client_password.findOne({"parentKey":doc.id,"childKey":data.data.passWord},function(err,docA){
+			data_mg.client_password.findOne({"parentKey":doc[0].id,"childKey":data.data.passWord},function(err,docA){
+				console.log(err)
+				console.log(docA)
 				if(docA){
 					result.code=1;
 					result.data=doc;
@@ -101,24 +109,28 @@ function login(socket,data,fn){
 
 function register(socket,data,fn){
 	console.log("client/register");
-	data.data={
-		"id":uuid(),/*id*/
-		"type":1,/*类型,1普通用户2管理用户*/
-		"userName":"用户名",/*用户名*/
-		"image":"http://",/*头像*/
-		"place":"地址",/*地址*/
-		"phone":"18239208903",/*手机*/
-		"email":"fhdj@email.com",/*邮箱*/
-		"name":"真实名",/*真实姓名*/
-		"contacts":"联系人",/*联系人*/
-		"contactsPhone":"2738948393",/*联系人电话*/
-		"record":"本科",/*学历*/
-		"university":"华农",/*毕业院校*/
-		"job":"这个职位",/*职位*/
-		"company":"公司",/*公司*/
-		"password":"123456"/*密码*/
-	}
-	var result={code:1};
+	if(typeof(data.data)=="string"){
+		data.data=JSON.parse(data.data)
+		}
+	
+	//data.data={
+	//	"id":uuid(),/*id*/
+	//	"type":1,/*类型,1普通用户2管理用户*/
+	//	"userName":"用户名",/*用户名*/
+	//	"image":"http://",/*头像*/
+	//	"place":"地址",/*地址*/
+	//	"phone":"18239208903",/*手机*/
+	//	"email":"fhdj@email.com",/*邮箱*/
+	//	"name":"真实名",/*真实姓名*/
+	//	"contacts":"联系人",/*联系人*/
+	//	"contactsPhone":"2738948393",/*联系人电话*/
+	//	"record":"本科",/*学历*/
+	//	"university":"华农",/*毕业院校*/
+	//	"job":"这个职位",/*职位*/
+	//	"company":"公司",/*公司*/
+	//	"password":"123456"/*密码*/
+	//}
+	var result={code:0};
 	var returnFn=function(){
 		if(socket){
 	 	socket.emit("client_register",result);
@@ -129,16 +141,18 @@ function register(socket,data,fn){
 	 	}	
 		}
 	var newClient=new data_mg.client(data.data)
-	newClient.save(function(err){
+	newClient.save(function(err,Clientsc){
+		console.log(Clientsc)
 		if(err){
 			result.code=0;
 			returnFn();
 			}else{
-				var newPassword=new client_password({
+				var newPassword=new data_mg.client_password({
 					"parentKey":data.data.id,
 					"childKey":data.data.password,
 					})
-				newPassword.save(function(errA){
+				newPassword.save(function(errA,Passsc){
+					console.log(Passsc)
 					if(errA){
 						result.code=0
 						returnFn();
@@ -287,23 +301,11 @@ function add(socket,data,fn){
 
 function edit(socket,data,fn){
 	console.log("client/edit");
-	data.data = {
-		"id":"24253",/*id*/
-		"type":1,/*类型,1普通用户2管理用户*/
-		"userName":"用户名",/*用户名*/
-		"image":"http://",/*头像*/
-		"place":"地址",/*地址*/
-		"phone":"18239208903",/*手机*/
-		"email":"fhdj@email.com",/*邮箱*/
-		"name":"真实名",/*真实姓名*/
-		"contacts":"联系人",/*联系人*/
-		"contactsPhone":"2738948393",/*联系人电话*/
-		"record":"本科",/*学历*/
-		"university":"华农",/*毕业院校*/
-		"job":"这个职位",/*职位*/
-		"company":"公司"/*公司*/
-	}
-	var result={code:1};
+	if(typeof(data.data)=="string"){
+		data.data=JSON.parse(data.data)
+		}
+	console.log(data.data)
+	var result={code:0};
 	var returnFn=function(){
 		if(socket){
 	 	socket.emit("client_edit",result);
@@ -313,15 +315,22 @@ function edit(socket,data,fn){
 	 		fn(returnString);
 	 	}
 	}
+	console.log("开始更新")
 	data_mg.client.update({"id":data.data.id},{$set:data.data},{},function(err){
+		console.log("更新回调")
 		if(err){
+			console.log(err)
 			result.code=0
 			returnFn()
 		}else{
-			data_mg.updateTime({"parentKey":"client"},{$set:{"childKey":new Date().getTime()}},{},function(errA){
+			console.log("开始更新时间")
+			data_mg.updateTime.update({"parentKey":"client"},{$set:{"childKey":new Date().getTime()}},{},function(errA){
+				console.log("更新回调")
 				if(errA){
+					console.log(errA)
 					result.code=0
 				}else{
+					console.log("修改成功")
 					result.code=1
 				}
 				returnFn();
