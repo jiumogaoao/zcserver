@@ -1,13 +1,9 @@
 function get(socket,data,fn){
 	console.log("redPacket/get");
-	data.data = 10086/*不传*/
+	
 	var result={
-		code:1,
-		data:[
-								{"id":"001","userId":"001","money":0,"type":"0","strat":0,"end":0},
-								{"id":"002","userId":"001","money":0,"type":"1","strat":0,"end":0},
-								{"id":"003","userId":"001","money":0,"type":"0","strat":0,"end":0}
-								]
+		code:0,
+		data:[]
 	};
 	var returnFn=function(){
 		if(socket){
@@ -18,7 +14,7 @@ function get(socket,data,fn){
 	 		fn(returnString);
 	 	}
 		}
-		returnFn();return;
+		//returnFn();return;
 	data_mg.updateTime.find({"parentKey":"redPacket"},function(err,doc){
 		if(err){
 			result.code=0
@@ -36,7 +32,11 @@ function get(socket,data,fn){
 								returnFn()
 						})
 					}
-				
+				else{
+					result.code=2
+					result.data=[]
+			returnFn()
+					}
 				}
 		})
 		
@@ -44,15 +44,11 @@ function get(socket,data,fn){
 
 function add(socket,data,fn){
 	console.log("redPacket/add");
-	data.data = {
-		"id":uuid(),/*id*/
-		"userId":"sfsgsf",/*用户id*/
-		"money":0,/*金额*/
-		"type":0,/*类型*/
-		"strat":0,/*发放日期*/
-		"end":0/*消费日期*/
+	if(typeof(data.data)=="string"){
+		data.data=JSON.parse(data.data)
 		}
-	var result={code:1};
+		console.log(data.data)
+	var result={code:0};
 	var returnFn=function(){
 		if(socket){
 	 	socket.emit("redPacket_add",result);
@@ -68,7 +64,7 @@ function add(socket,data,fn){
 			result.code=0
 			returnFn();
 			}else{
-				data_mg.updateTime.update({"parentKet":"redPacket"},{$set:{"childKey":new Date().getTime()}},{},function(errA){
+				data_mg.updateTime.update({"parentKey":"redPacket"},{$set:{"childKey":new Date().getTime()}},{},function(errA){
 					if(errA){
 						result.code=0
 						}else{

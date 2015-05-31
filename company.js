@@ -2,15 +2,9 @@ function get(socket,data,fn){
 	console.log("company/get");
 	data.data = null;/*不传*/
 	var result={
-						code : 1,
-						time : 10086,
-						data : [
-								{"id":"001","title":"dhfkh","message":"edgdf","start":0,"end":1008611},
-								{"id":"002","title":"dhfkh","message":"edgdf","start":0,"end":1008611},
-								{"id":"003","title":"dhfkh","message":"edgdf","start":0,"end":1008611},
-								{"id":"004","title":"dhfkh","message":"edgdf","start":0,"end":1008611},
-								{"id":"005","title":"dhfkh","message":"edgdf","start":0,"end":1008611}
-								]
+						code : 0,
+						time : 0,
+						data : []
 						};
 	var returnFn=function(){
 		if(socket){
@@ -21,8 +15,8 @@ function get(socket,data,fn){
 	 		fn(returnString);
 	 	}	
 	}
-	returnFn();
-	return;
+	//returnFn();
+	//return;
 	data_mg.updateTime.find({"parentKey":"company"},function(err,doc){
 		if(err){
 			result.code=0;
@@ -119,8 +113,8 @@ function edit(socket,data,fn){
 
 function remove(socket,data,fn){
 	console.log("company/remove");
-	data.data="dfsf"/*资料id*/
-	var result={code:1};
+
+	var result={code:0};
 	var returnFn=function(){
 		if(socket){
 	 	socket.emit("company_remove",result);

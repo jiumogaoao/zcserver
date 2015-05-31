@@ -204,7 +204,7 @@ var app = require('./server')
 			console.log("productTime init");
 			totalCheck();
 			});
-	var promotionUP=new data_mg.updateTime({"parentKey":"promotion","childKey":"0"})
+	var promotionUP=new data_mg.updateTime({"parentKey":"promotion","childKey":new Date().getTime()})
 	    promotionUP.save(function(){
 			console.log("promotionTime init");
 			totalCheck();
@@ -304,7 +304,7 @@ var app = require('./server')
 			});
 		}
 	//emptyDB();	 
-	 showDB();
+	showDB();
 
 
  	 var io = require('socket.io').listen(app.target)
