@@ -4,6 +4,8 @@ var MemberSchema = new mongoose.Schema({
 		"title":String,/*标题*/
 		"subhead":String,/*副标题*/
 		"image":Array,/*图片*/
+		"imageH":Array,/*户型图*/
+		"imageA":Array,/*区位图*/
 		"price":Number,/*价格*/
 		"costPrice":Number,/*原价*/
 		"money":Number,/*金额*/
@@ -26,6 +28,12 @@ var MemberSchema = new mongoose.Schema({
 		"rightType":String,/*产权类型*/
 		"haveLease":String,/*有否租约*/
 		"yearReturn":String,/*年收益率*/
-		"more":Number
+		"more":Number,
+		"dsc":String,//简介
+		"low":String,//法律
+		"action":String,//房价走势
+		"manager":String,//资产管理
+		"review":String,//资产评估
+		"suggest":String//综合建议
 	})
 module.exports = MemberSchema;
