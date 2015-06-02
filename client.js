@@ -1,35 +1,40 @@
 
 function checkUser(socket,data,fn){
 	console.log("client/checkUser");
-	data.data="name";
-	var result={code:1};
-	data_mg.client.find({userName:data.data},function(err,doc){
-		if(doc&&doc.length){
-			result.code=0
-			}else{
-				result.code=1
-				}
-			if(socket){
+	console.log(data.data);
+	//data.data="name";
+	var result={code:0};
+	var returnFn=function(){
+		if(socket){
 	 	socket.emit("client_checkUser",result);
 	 }
 	 	else if(fn){
 	 		var returnString = JSON.stringify(result);
 	 		fn(returnString);
 	 	}
+		}
+	data_mg.client.find({userName:data.data},function(err,doc){
+		if(err){
+			result.code=0;
+			returnFn();
+			}else{
+				if(doc&&doc.length){
+			result.code=0
+			}else{
+				result.code=1
+				}
+			returnFn();
+				}
+		
 		})
 		
 };
 
 function checkPhone(socket,data,fn){
 	console.log("client/checkPhone");
-	data.data = "phone";
-	var result={code:1};
-	data_mg.client.find({phone:data.data},function(err,doc){
-		if(doc&&doc.length){
-			result.code=0
-			}else{
-				result.code=1
-				}
+	console.log(data.data)
+	var result={code:0};
+	var returnFn=function(){
 		if(socket){
 	 	socket.emit("client_checkPhone",result);
 	 }
@@ -37,27 +42,52 @@ function checkPhone(socket,data,fn){
 	 		var returnString = JSON.stringify(result);
 	 		fn(returnString);
 	 	}
+		}
+	data_mg.client.find({phone:data.data},function(err,doc){
+		if(err){
+			result.code=0;
+			returnFn();
+			}else{
+				if(doc&&doc.length){
+			result.code=0
+			}else{
+				result.code=1
+				}
+				returnFn();
+				}
+		
+		
 		})
 		
 };
 
 function checkEmail(socket,data,fn){
 	console.log("client/checkEmail");
-	data.data = "email";
-	var result={code:1};
-	data_mg.client.find({phone:data.data},function(err,doc){
-		if(doc&&doc.length){
-			result.code=0
-			}else{
-				result.code=1
-				}
+	console.log(data.data)
+	var result={code:0};
+	var returnFn=function(){
 		if(socket){
 	 	socket.emit("client_checkEmail",result);
 	 }
 	 	else if(fn){
 	 		var returnString = JSON.stringify(result);
 	 		fn(returnString);
-	 	}	
+	 	}
+		}
+	data_mg.client.find({phone:data.data},function(err,doc){
+		if(err){
+			console.log(err);
+			returnFn();
+			}else{
+				if(doc&&doc.length){
+			result.code=0
+			}else{
+				result.code=1
+				}
+				returnFn();
+				}
+		
+			
 		})
 };
 
