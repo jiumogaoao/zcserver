@@ -37,6 +37,7 @@ var app = require('./server')
       data_mg.updateTime = require('./data/models/updateTime');//更新表
       data_mg.deal = require('./data/models/deal');//交易表
       data_mg.bind = require('./data/models/bind');//绑定表
+	  data_mg.bindCode = require('./data/models/bindCode');//验证码表
 	var showDB=function(){
 		
 		data_mg.client.find({},function(err,data){console.log("client")
