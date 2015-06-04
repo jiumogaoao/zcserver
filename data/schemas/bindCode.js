@@ -2,6 +2,6 @@ var mongoose = require('mongoose');
 var MemberSchema = new mongoose.Schema({
 		"type":String,
 		"number":String,
-		"code":Boolean
+		"code":String
 	})
 module.exports = MemberSchema;

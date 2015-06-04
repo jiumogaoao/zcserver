@@ -2,7 +2,7 @@ var http = require('http');
 var qs = require('querystring');  
 
 var crypto = require('crypto');
-var userName = 'dwfc'
+var userName = 'wdfc'
 var password = '123123'
 var md5 = crypto.createHash('md5');
 md5.update(password);
@@ -21,14 +21,12 @@ var options = {
 /**********************************************************************/
 var nodemailer = require("nodemailer");
 // 开启一个 SMTP 连接池
-var smtpTransport = nodemailer.createTransport("SMTP",{
-  host: "smtp.qq.com", // 主机
-  secureConnection: true, // 使用 SSL
-  port: 465, // SMTP 端口
-  auth: {
-    user: "394127821@qq.com", // 账号
-    pass: "jiumogaoao86," // 密码
-  }
+var smtpTransport = nodemailer.createTransport({
+    service: 'qq',
+    auth: {
+        user: '394127821@qq.com',
+        pass: 'jiumogaoao86'
+    }
 });
 
 /************************************************************************/
@@ -252,12 +250,11 @@ function register(socket,data,fn){
 
 function resetKey(socket,data,fn){
 	console.log("client/resetKey");
-	data.data={
-				id:"2333r3",/*用户id*/
-				oldKey:"1231231",/*旧密码*/
-				newKey:"532424"/*新密码*/
-				}
-	var result={code:1};
+	if(typeof(data.data)=="string"){
+		data.data=JSON.parse(data.data)
+		}
+		console.log(data.data)
+	var result={code:0};
 	data_mg.client.update({"parentKey":data.data.id,"childKey":data.data.oldKey},{$set:{"childKey":data.data.newKey}},{},function(err){
 		if(err){
 			result.code=0
@@ -486,21 +483,21 @@ function bind(socket,data,fn){
 			result.code=0;
 			returnFn();
 			}else{
-				if(doc){
-					if(doc.code==data.data.code){
+				if(doc){console.log("有数据")
+					if(doc.code==data.data.code){console.log("验证码正确,删除数据")
 						data_mg.bindCode.remove({"type":data.data.type,"number":data.data.number},function(errB){
 							if(errB){
 								console.log(errB);
 								result.code=0;
 								returnFn();
-								}else{
+								}else{console.log("添加绑定")
 									var setTrue={};
 									setTrue[data.data.type]=true;
-									data_mg.bind.updata({"id":data.data.id},{$set:setTrue},{},function(errC){
+									data_mg.bind.update({"id":data.data.id},{$set:setTrue},{},function(errC){
 										if(errC){
 											result.code=0;
 								returnFn();
-											}else{
+											}else{console.log("更新客户端")
 												var setType={};
 												setType[data.data.type]=data.data.number;
 												data_mg.client.update({"id":data.data.id},{$set:setType},{},function(errD){
@@ -515,7 +512,13 @@ function bind(socket,data,fn){
 										})
 									}
 							})
-						}
+						}else{
+							console.log("验证码不正确")
+							console.log(doc.code)
+							console.log(data.data.code)
+							result.code=0;
+							returnFn();
+							}
 					}else{
 						result.code=0;
 			returnFn();
@@ -545,11 +548,13 @@ function getBindCode(socket,data,fn){
 			var code=Math.round(Math.random()*1000000)
 			console.log(code)
 			function sendMsg(){
+				console.log(data.data.number)
+				console.log(code)
 					var post_data = {  
     					username: userName,  
     					password: b,
-						mobile:"13692146343",
-						content:"短信测试，你的验证码是"+code,
+						mobile:data.data.number,
+						content:"【验证码】你的验证码是"+code,
 						dstime:null
 						};//这是需要提交的数据  
   
@@ -578,6 +583,7 @@ function getBindCode(socket,data,fn){
 				}
 			if(doc){
 				console.log("修改code")
+				console.log(code)
 				data_mg.bindCode.update({"type":data.data.type,"number":data.data.number},{$set:{"code":code}},{},function(errA){
 					if(errA){
 						console.log(errA)
@@ -591,18 +597,19 @@ function getBindCode(socket,data,fn){
 									// 设置邮件内容
 var mailOptions = {
   from: "jiumogaoao<394127821@qq.com>", // 发件地址
-  to: "394127821@qq.com", // 收件列表
+  to: data.data.number, // 收件列表
   subject: "test", // 标题
+  text: 'Hello world ✔',
   html: "<b>test</b> "+code // html 内容
 }
 // 发送邮件
-smtpTransport.sendMail(mailOptions, function(error, response){
+smtpTransport.sendMail(mailOptions, function(error, info){
   if(error){
     console.log(error);
 	result.code=0;
 	 returnFn()
   }else{
-    console.log("Message sent: " + response.message);
+    console.log("Message sent: " + info.response);
 	result.code=1;
 							result.data=code;
 							  returnFn()
@@ -625,7 +632,30 @@ smtpTransport.sendMail(mailOptions, function(error, response){
 							console.log(b);
 							if(data.data.type=="phone"){
 								sendMsg()
-								}
+								}else{
+									// 设置邮件内容
+var mailOptions = {
+   from: "jiumogaoao<394127821@qq.com>", // 发件地址
+  to: data.data.number, // 收件列表
+  subject: "test", // 标题
+  text: 'Hello world ✔',
+  html: "<b>test</b> "+code // html 内容
+}
+// 发送邮件
+smtpTransport.sendMail(mailOptions, function(error, info){
+  if(error){
+    console.log(error);
+	result.code=0;
+	 returnFn()
+  }else{
+    console.log("Message sent: " + info.response);
+	result.code=1;
+							result.data=code;
+							  returnFn()
+  }
+  smtpTransport.close(); // 如果没用，关闭连接池
+});
+									}
 							
 							}
 						
@@ -649,6 +679,7 @@ function getBind(socket,data,fn){
 	 		fn(returnString);
 	 	}
 		}
+		console.log("获取绑定信息")
 	data_mg.bind.findOne({id:data.data},function(err,doc){
 		if(err){
 			console.log(err);
@@ -657,7 +688,7 @@ function getBind(socket,data,fn){
 				if(doc){
 					result.code=1;
 					result.data=doc;
-					}else{
+					}else{console.log("找不到绑定信息")
 						result.code=0;
 						}
 				}

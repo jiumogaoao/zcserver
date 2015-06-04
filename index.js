@@ -304,8 +304,8 @@ var app = require('./server')
 			totalCheck();
 			});
 		}
-	emptyDB();	 
-	//showDB();
+	//emptyDB();	 
+	showDB();
 
 
  	 var io = require('socket.io').listen(app.target)
