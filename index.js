@@ -94,7 +94,7 @@ var app = require('./server')
 			console.log("indexpromo3 init");
 			totalCheck();
 			});
-		var indexpromo4=new data_mg.promotion({"id":"004","name":"饼状图","image":[""],"dsc":"","job":"",group:"index",data:[
+		var indexpromo4=new data_mg.promotion({"id":"004","name":"星众客户组成","image":[""],"dsc":"","job":"",group:"index",data:[
 										{"name":"19岁以下","value":1},
 										{"name":"20-29岁以下","value":25},
 										{"name":"30-39岁以下","value":62},
@@ -105,27 +105,35 @@ var app = require('./server')
 			console.log("indexpromo4 init");
 			totalCheck();
 			});
-		var indexpromo5=new data_mg.promotion({"id":"005","name":"雷达图","image":[""],"dsc":"","job":"",group:"index",data:[
-										{"name":"北京","value":32.26},
-										{"name":"上海","value":28.93},
-										{"name":"广州","value":21.65},
-										{"name":"杭州","value":9.21},
-										{"name":"南京","value":8.26},
-										{"name":"深圳","value":5.43},
-										{"name":"东三省","value":5.27},
-										{"name":"成都","value":5.21},
-										{"name":"厦门","value":2.87},
-										{"name":"乌鲁木齐","value":0.16},
+		var indexpromo5=new data_mg.promotion({"id":"005","name":"中南海地价","image":[""],"dsc":"","job":"",group:"index",data:[
+										{"name":"03/12","value":1000},
+										{"name":"03/16","value":1232},
+										{"name":"03/20","value":1225},
+										{"name":"03/24","value":1135},
+										{"name":"03/28","value":1445},
+										{"name":"04/02","value":1744},
+										{"name":"04/06","value":1453},
+										{"name":"04/10","value":1264},
+										{"name":"04/14","value":1046},
+										{"name":"04/18","value":1123},
 									]})
 		indexpromo5.save(function(){
 			console.log("indexpromo5 init");
 			totalCheck();
 			});
-		var indexpromo6=new data_mg.promotion({"id":"006","name":"柱状图","image":[""],"dsc":"","job":"",group:"index",data:[
-										{"name":"一个月","value":10},
-										{"name":"三个月","value":20},
-										{"name":"六个月","value":30},
-										{"name":"九个月","value":40},
+		var indexpromo6=new data_mg.promotion({"id":"006","name":"星众2014业绩","image":[""],"dsc":"","job":"",group:"index",data:[
+										{"name":"一月","value":10},
+										{"name":"二月","value":10},
+										{"name":"三月","value":20},
+										{"name":"四月","value":30},
+										{"name":"五月","value":40},
+										{"name":"六月","value":50},
+										{"name":"七月","value":60},
+										{"name":"八月","value":70},
+										{"name":"九月","value":80},
+										{"name":"十月","value":90},
+										{"name":"十一月","value":40},
+										{"name":"十二月","value":50},
 									]})
 		indexpromo6.save(function(){
 			console.log("indexpromo6 init");
@@ -304,8 +312,8 @@ var app = require('./server')
 			totalCheck();
 			});
 		}
-	//emptyDB();	 
-	showDB();
+	emptyDB();	 
+	//showDB();
 
 
  	 var io = require('socket.io').listen(app.target)

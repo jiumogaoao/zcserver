@@ -34,6 +34,7 @@ var MemberSchema = new mongoose.Schema({
 		"action":String,//房价走势
 		"manager":String,//资产管理
 		"review":String,//资产评估
-		"suggest":String//综合建议
+		"suggest":String,//综合建议
+		"change":Number//债权转移费用
 	})
 module.exports = MemberSchema;

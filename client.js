@@ -62,6 +62,37 @@ function checkUser(socket,data,fn){
 		})
 		
 };
+function checkUserName(socket,data,fn){
+	console.log("client/checkUserName");
+	console.log(data.data);
+	//data.data="name";
+	var result={code:0};
+	var returnFn=function(){
+		if(socket){
+	 	socket.emit("client_checkUser",result);
+	 }
+	 	else if(fn){
+	 		var returnString = JSON.stringify(result);
+	 		fn(returnString);
+	 	}
+		}
+	data_mg.client.find({userName:data.data},function(err,doc){
+		if(err){
+			result.code=0;
+			returnFn();
+			}else{
+				if(doc&&doc.length){
+			result.code=1
+			result.data=doc
+			}else{
+				result.code=0
+				}
+			returnFn();
+				}
+		
+		})
+	
+	}
 
 function checkPhone(socket,data,fn){
 	console.log("client/checkPhone");
@@ -554,7 +585,7 @@ function getBindCode(socket,data,fn){
     					username: userName,  
     					password: b,
 						mobile:data.data.number,
-						content:"【验证码】你的验证码是"+code,
+						content:"【星众众筹】你的验证码是"+code,
 						dstime:null
 						};//这是需要提交的数据  
   
@@ -695,6 +726,22 @@ function getBind(socket,data,fn){
 				returnFn()
 		});	
 };
+function getCard(socket,data,fn){
+	console.log(data);
+	console.log(client/getCard);
+	var result={code:1,data:[]};
+	function returnFn(){
+		if(socket){
+	 	socket.emit("client_getCard",result);
+	 }
+	 	else if(fn){
+	 		var returnString = JSON.stringify(result);
+	 		fn(returnString);
+	 	}
+		}
+		returnFn()
+	}
+exports.checkUserName=checkUserName;
 exports.getSafeQusetion=getSafeQusetion;
 exports.checkSafeQusetion=checkSafeQusetion;
 exports.checkUser=checkUser;
