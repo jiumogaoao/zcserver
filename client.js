@@ -286,7 +286,7 @@ function resetKey(socket,data,fn){
 		}
 		console.log(data.data)
 	var result={code:0};
-	data_mg.client.update({"parentKey":data.data.id,"childKey":data.data.oldKey},{$set:{"childKey":data.data.newKey}},{},function(err){
+	data_mg.client_password.update({"parentKey":data.data.id,"childKey":data.data.oldKey},{$set:{"childKey":data.data.newKey}},{},function(err){
 		if(err){
 			result.code=0
 			}else{
@@ -597,7 +597,9 @@ function getBindCode(socket,data,fn){
 					res.on('data', function (chunk) {  
 					console.log(chunk)
 						result.code=1;
+						
 							result.data=code;
+							console.log(code)
 							  returnFn()
 					});  
 				});  
