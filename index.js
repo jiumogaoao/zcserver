@@ -15,7 +15,8 @@ var app = require('./server')
       product : require('./product'),
       promotion : require('./promotion'),
       recruit : require('./recruit'),
-      redPacket : require('./redPacket')
+      redPacket : require('./redPacket'),
+	  config : require('./config')
    }
 
    var dbURL="mongodb://127.0.0.1:27017/talk"
@@ -38,6 +39,7 @@ var app = require('./server')
       data_mg.deal = require('./data/models/deal');//交易表
       data_mg.bind = require('./data/models/bind');//绑定表
 	  data_mg.bindCode = require('./data/models/bindCode');//验证码表
+	  data_mg.config = require('./data/models/config');//验证码表
 	var showDB=function(){
 		
 		data_mg.client.find({},function(err,data){console.log("client")
@@ -60,12 +62,16 @@ var app = require('./server')
 		  console.log("password")
 		  console.log(data)
 		  })
+		data_mg.config.find({},function(err,data){
+		  console.log("config")
+		  console.log(data)
+		  })
 		}
 	var initDB=function(){
 		var totalCount=0;
 		function totalCheck(){
 			totalCount++;
-			if(totalCount==24){
+			if(totalCount==26){
 				showDB();
 				}
 			}
@@ -186,6 +192,51 @@ var app = require('./server')
 			console.log("indexpromo12 init");
 			totalCheck();
 			});
+			
+		var addConfig=new data_mg.config({
+		any:{
+		footerInfo:{
+			titleText:"全国首家专业房地产众筹平台",
+			slogan:"人人参与  创新投资",
+			mobile:"（021）6181-3682",
+			fax:"（021）6181-3682",
+			time:"（周一至周五 10:00-18:30）",
+			number:"400-661-3350",
+	      companyName:"上海中筹互联网金融信息服务有限公司",
+		  referredToAs:"",
+		  companyUrl:"",
+	      cooperationEmail:"biz@cncrowd.com",
+		  recruitmentEmail:"biz@cncrowd.com",
+		  address:["地址：上海市长宁区延安西路1118号","龙之梦大厦2202室&nbsp;&nbsp;&nbsp;&nbsp;","200052"],
+	      copRight:"©2014 CNCrowd",
+		  record:" 沪ICP备14044695号-1",
+	      nav:[{id:"mode",name:"中筹模式"},{id:"product",name:"我要众筹"},{id:"procedure",name:"众筹步聚"},{id:"FAQS",name:"常见问题"},{id:"about",name:"关于我们"}],
+	      conText_0:"为全国首家专业房地产众筹平台",
+	      conText_1:"致力于通过互联网金融的创新",
+	      conText_2:"推动传统房地产投融资模式的变革和创新"
+         },
+         earnings:{
+           titleText:"高收益从何而来",
+           dsc:"高收益来自于对市场的深度判断和有力操控",
+           earningsRateTitle:"收益率",
+           earningsRate:"15%",
+           steps:["开始众筹","风险把控","资产来源","每份100元","众筹获利","增值管理","溢价出售"],
+           title_2:"众筹",
+           image:"images/slide_01.png"
+         },
+		 logo:"http://",
+		 more:"1",
+		 change:"1",
+         button:[[{id:"login",name:"登录"},{id:"register",name:"注册"}],[{id:"zone",name:"用户中心"},{id:"out",name:"退出"}],[{id:"out",name:"退出"}]],
+         nav:[{id:"mode",name:"众筹模式"},{id:"product",name:"我要众筹"},{id:"procedure",name:"众筹步聚"},{id:"FAQS",name:"常见问题"},{id:"about",name:"关于我们"}]
+		}
+     })
+	 	addConfig.save(
+		function(){
+			console.log("config init");
+			totalCheck();
+			}
+		)
 		var adminUP=new data_mg.updateTime({"parentKey":"admin","childKey":"0"})
 	    adminUP.save(
 		function(){
@@ -238,12 +289,17 @@ var app = require('./server')
 			console.log("bindTime init");
 			totalCheck();
 			});
+	var configUP=new data_mg.updateTime({"parentKey":"config","childKey":new Date().getTime()})
+	    configUP.save(function(){
+			console.log("configTime init");
+			totalCheck();
+			});
 		}
 	var emptyDB=function(){
 		var totalCount=0;
 		function totalCheck(){
 			totalCount++;
-			if(totalCount==16){
+			if(totalCount==17){
 				initDB();
 				}
 			}
@@ -311,9 +367,13 @@ var app = require('./server')
 			console.log("bind empty");
 			totalCheck();
 			});
+	data_mg.config.remove({},function(){
+			console.log("config empty");
+			totalCheck();
+			});		
 		}
-	//emptyDB();	 
-	showDB();
+	emptyDB();	 
+	//showDB();
 
 
  	 var io = require('socket.io').listen(app.target)

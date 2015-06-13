@@ -12,7 +12,8 @@ var server = {
  		product : require('./product'),
  		promotion : require('./promotion'),
  		recruit : require('./recruit'),
- 		redPacket : require('./redPacket')
+ 		redPacket : require('./redPacket'),
+		config : require('./config')
    }
 event.on('server', function() {
 	if(catchs.model&&catchs.action){
