@@ -224,7 +224,7 @@ var app = require('./server')
            title_2:"众筹",
            image:"images/slide_01.png"
          },
-		 logo:"http://",
+		 logo:"img/headerLogo.jpg",
 		 more:"1",
 		 change:"1",
          button:[[{id:"login",name:"登录"},{id:"register",name:"注册"}],[{id:"zone",name:"用户中心"},{id:"out",name:"退出"}],[{id:"out",name:"退出"}]],
