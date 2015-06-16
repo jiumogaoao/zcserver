@@ -30,11 +30,41 @@ function add(socket,data,fn){
 	deal.save(function(err){
 		if(err){
 			console.log(err)
-			result.code=0
-			}else{
-				result.code=1
-				}
+			result.code=0;
 			returnFn();
+			}else{
+				console.log("开始修改product")
+				data_mg.product.findOne({id:data.data.productId},function(errA,product){
+					if(errA){
+						console.log(errA);
+						result.code=0;
+						returnFn();
+						}else{
+							var payedCount=product.payedCount+data.data.count;
+							var payed=product.payed+(data.data.buyPrice*data.data.count);
+							data_mg.product.update({id:data.data.productId},{$set:{payedCount:payedCount,payed:payed}},{},function(errB){
+								
+								if(errB){
+									console.log(errB);
+									result.code=0;
+									returnFn();
+									}else{
+										console.log("更新product时间")
+										data_mg.updateTime.update({"parentKey":"product"},{$set:{"childKey":new Date().getTime()}},{},function(errC){
+											if(errC){
+												console.log(errC);
+												result.code=0;
+												}else{
+													result.code=1;
+													}
+													returnFn();
+											})
+										}
+								})
+							}
+					})
+				}
+			
 		});
 		
 };
@@ -57,11 +87,47 @@ function edit(socket,data,fn){
 		data_mg.deal.update({"id":data.data.id},{$set:data.data},{},function(err){
 			if(err){
 				console.log(err)
-				result.code=0
+				result.code=0;
+				returnFn();
 				}else{
-					result.code=1
+					if(data.data.endTime){
+						console.log("开始修改product")
+				data_mg.product.findOne({id:data.data.productId},function(errA,product){
+					if(errA){
+						console.log(errA);
+						result.code=0;
+						returnFn();
+						}else{
+							var payedCount=product.payedCount-data.data.count;
+							var payed=product.payed-(data.data.buyPrice*data.data.count);
+							data_mg.product.update({id:data.data.productId},{$set:{payedCount:payedCount,payed:payed}},{},function(errB){
+								
+								if(errB){
+									console.log(errB);
+									result.code=0;
+									returnFn();
+									}else{
+										console.log("更新product时间")
+										data_mg.updateTime.update({"parentKey":"product"},{$set:{"childKey":new Date().getTime()}},{},function(errC){
+											if(errC){
+												console.log(errC);
+												result.code=0;
+												}else{
+													result.code=1;
+													}
+													returnFn();
+											})
+										}
+								})
+							}
+					})
+						}else{
+							result.code=1;
+							returnFn();
+							}
+					
 					}
-					returnFn();
+					
 			})
 		
 };
