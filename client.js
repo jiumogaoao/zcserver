@@ -260,11 +260,22 @@ function register(socket,data,fn){
 									bindData.save(function(errC){
 										if(errC){
 											console.log(errC);
-											result.code=0
+											result.code=0;
+											returnFn();
 											}else{
-												result.code=1;
+												var saveQ=new data_mg.saveQuestion({"id":data.data.id,"question1":"0","question2":"0","answer1":"","answer2":""})
+												saveQ.save(function(errD){
+													if(errD){
+														console.log(errD)
+														result.code=0
+														}else{
+														result.code=1;	
+														}
+														returnFn();
+													})
+												
 												}
-												returnFn();
+												
 										})
 									
 								}
@@ -470,16 +481,55 @@ function remove(socket,data,fn){
 };
 function getSafeQusetion(socket,data,fn){
 	console.log("client/getSafeQusetion");
-	var result={code:1};
-if(socket){
+	var result={code:0};
+	function returnFn(){
+		if(socket){
 	 	socket.emit("client_getSafeQusetion",result);
 	 }
 	 	else if(fn){
 	 		var returnString = JSON.stringify(result);
 	 		fn(returnString);
-	 	}		
+	 	}	
+		}
+	data_mg.saveQuestion.findOne({"id":data.data},function(err,doc){
+		if(err){
+			console.log(err);
+			result.code=0
+			}else{
+				result.code=1;
+				result.data=doc;
+				}
+			returnFn()
+		})
+	
+	
 };
-
+function setSafeQusetion(socket,data,fn){
+	console.log("client/setSafeQusetion");
+	if(data.data&&typeof(data.data)=="string"){
+		data.data=JSON.parse(data.data)
+		}
+	var result={code:0};
+	function returnFn(){
+		if(socket){
+	 	socket.emit("client_setSafeQusetion",result);
+	 }
+	 	else if(fn){
+	 		var returnString = JSON.stringify(result);
+	 		fn(returnString);
+	 	}	
+		}
+	data_mg.saveQuestion.update({"id":data.data.id},{"$set":data.data},{},function(err){
+		if(err){
+			console.log(err)
+			result.code=0
+			}else{
+				result.code=1
+				}
+			returnFn()	
+		})	
+	
+};
 function checkSafeQusetion(socket,data,fn){
 	console.log("client/checkSafeQusetion");
 	var result={code:1};
@@ -745,6 +795,7 @@ function getCard(socket,data,fn){
 	}
 exports.checkUserName=checkUserName;
 exports.getSafeQusetion=getSafeQusetion;
+exports.setSafeQusetion=setSafeQusetion;
 exports.checkSafeQusetion=checkSafeQusetion;
 exports.checkUser=checkUser;
 exports.checkPhone=checkPhone;
