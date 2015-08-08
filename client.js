@@ -156,6 +156,7 @@ function checkEmail(socket,data,fn){
 };
 
 function login(socket,data,fn){
+	console.log(data);
 	console.log("client/login");
 	//data.data = {"userName":"aa",/*登录名/手机/邮箱*/
 	//			"passWord":"djisk"}/*密码*/
@@ -187,12 +188,29 @@ function login(socket,data,fn){
 				console.log(err)
 				console.log(docA)
 				if(docA){
-					result.code=1;
+					doc[0].lastTime=doc[0].time||new Date().getTime();
+					doc[0].lastIp=doc[0].ip||"none";
+					doc[0].time=new Date().getTime();
+					doc[0].ip=data.ip || "none";
+					console.log(doc[0]);
+					data_mg.client.update({"id":doc[0].id},{"$set":{"lastTime":doc[0].time||new Date().getTime(),lastIp:doc[0].ip||"none",time:new Date().getTime(),ip:data.ip || "none"}},{},function(errB){
+						console.log("updateClient")
+						if(errB){
+							console.log(errB)
+							result.code=0;
+							}else{
+								console.log("succeed")
+								result.code=1;
 					result.data=doc;
+								}
+							returnFunction();	
+						})
+					
 					}else{
 						result.code=0;
+						returnFunction();
 						}
-				returnFunction();
+				
 				})
 			}else{result.code=0;
 			returnFunction();

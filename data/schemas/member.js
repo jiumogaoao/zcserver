@@ -16,6 +16,10 @@ var MemberSchema = new mongoose.Schema({
 		"university":String,/*毕业院校*/
 		"job":String,/*职位*/
 		"company":String,/*公司*/
-		"introducer":String/*介绍人*/
+		"introducer":String,/*介绍人*/
+		"lastTime":Number,/*上次登录时间*/
+		"lastIp":String,/*上次登录IP*/
+		"time":Number,/*当前登录时间*/
+		"ip":String/*当前登录ip*/
 	})
 module.exports = MemberSchema;
